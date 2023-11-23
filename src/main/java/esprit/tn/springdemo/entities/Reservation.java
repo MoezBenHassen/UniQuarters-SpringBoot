@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,12 +17,20 @@ import java.util.List;
 @NoArgsConstructor
 public class Reservation {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
     private LocalDate anneeUniversitaire;
     private Boolean estValide;
 
-    @ManyToMany
-    private List<Etudiant> etudiants;
+    @ManyToMany(mappedBy = "reservations")
+    private Set<Etudiant> etudiants;
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id='" + id + '\'' +
+                ", anneeUniversitaire=" + anneeUniversitaire +
+                ", estValide=" + estValide +
+                '}';
+    }
 }

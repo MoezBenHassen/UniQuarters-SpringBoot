@@ -59,4 +59,17 @@ public class ReservationController {
         }
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
+
+    @PostMapping("/{idChambre}/{cinEtudiant}")
+    public ResponseEntity<ApiResponse> ajouterReservation(@RequestBody Reservation reservation, @PathVariable long idChambre, @PathVariable long cinEtudiant) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            Reservation addedReservation = reservationService.ajouterReservation(reservation, idChambre, cinEtudiant);
+            apiResponse.setResponse(HttpStatus.OK, "Reservation added");
+            apiResponse.addData("reservation", addedReservation);
+        } catch (Exception e) {
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+    }
 }

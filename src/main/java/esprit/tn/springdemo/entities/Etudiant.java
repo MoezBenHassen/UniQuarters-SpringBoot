@@ -1,5 +1,6 @@
 package esprit.tn.springdemo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +25,8 @@ public class Etudiant {
     String ecole;
     Date dateNaissance;
 
-    @ManyToMany(mappedBy = "etudiants")
+    @ManyToMany
+    @JsonIgnore
     private List<Reservation> reservations;
 
 
