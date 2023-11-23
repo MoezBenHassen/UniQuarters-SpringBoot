@@ -24,7 +24,7 @@ public class Foyer {
     @OneToOne
     @JsonIgnore
     private Universite universite;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "foyer", cascade = CascadeType.ALL)
     private List<Bloc> blocs;
 
