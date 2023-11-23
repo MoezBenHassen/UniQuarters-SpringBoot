@@ -43,11 +43,39 @@ public class ReservationServiceImpl implements IReservationService {
         System.out.println("Begin add reservation");
         Chambre chambre = chambreRepo.getById(idChambre);
         System.out.println("founded chambre: " + chambre);
+        if (chambre == null) {
+            throw new RuntimeException("Chambre not found");
+        }
+
         Etudiant etudiant = etudiantRepo.getByCin(cinEtudiant);
         System.out.println("founded etudiant: " + etudiant);
+        if (etudiant == null) {
+            throw new RuntimeException("Etudiant not found");
+        }
 
-        String id = this.generateId(idChambre, cinEtudiant, chambre.getReservations().size() + 1);
+        System.out.println("Bloc: " + chambre.getBloc());
+        if (chambre.getBloc() == null) {
+            throw new RuntimeException("Bloc not found");
+        }
+        String id = this.generateId(idChambre, chambre.getBloc().getNom(), cinEtudiant);
         System.out.println("generated id: " + id);
+
+        // check if reservation already exists
+        Reservation existingReservation = reservationRepo.findById(id);
+        if (existingReservation != null) {
+            Boolean resaIsValide = existingReservation.getEstValide();
+            if (resaIsValide == true) {
+                throw new RuntimeException("Reservation already exists and it is valid");
+            }
+            System.out.println("reservation already exists but it is not valid");
+            if (chambre.getReservations().contains(existingReservation)) {
+                throw new RuntimeException("Chambre already contains this reservation");
+            }
+            if (etudiant.getReservations().contains(existingReservation)) {
+                throw new RuntimeException("Etudiant already contains this reservation");
+            }
+
+        }
         reservation.setId(id);
         //System.out.println("les etudiants de entite resa: " + reservation.getEtudiants());
         System.out.println("les reservations de entite etudiant: " + etudiant.getReservations());
@@ -71,7 +99,8 @@ public class ReservationServiceImpl implements IReservationService {
         return savedReservation;
     }
 
-    private String generateId(long idChambre, long cinEtudiant, long index) {
-        return idChambre + "-" + cinEtudiant + "-" + index;
+    private String generateId(long idChambre, String nomBloc, long cinEtudiant) {
+        return idChambre + "-" + nomBloc + "-" + cinEtudiant;
     }
+
 }
