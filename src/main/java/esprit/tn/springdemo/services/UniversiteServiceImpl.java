@@ -31,8 +31,11 @@ public class UniversiteServiceImpl implements IUniversiteService {
     }
 
     @Override
-    public Universite updateUniversity(Universite u) {
-        return universiteRepo.save(u);
+    public Universite updateUniversity(Universite u,Long id) {
+        Universite uni =universiteRepo.getById(id);
+        uni.setAdresse(u.getAdresse());
+        uni.setNom(u.getNom());
+        return universiteRepo.save(uni);
     }
 
     @Override

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/universites")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
+
 public class UniversiteController {
     private final IUniversiteService universiteService;
 
@@ -45,7 +47,7 @@ public class UniversiteController {
         try {
             apiResponse.setResponse(org.springframework.http.HttpStatus.CREATED, "University updated");
             universite.setId(idUnivesity);
-            apiResponse.addData("university", universiteService.updateUniversity(universite));
+            apiResponse.addData("university", universiteService.updateUniversity(universite,idUnivesity));
         } catch (Exception e) {
             apiResponse.setResponse(org.springframework.http.HttpStatus.BAD_REQUEST, e.getMessage());
         }

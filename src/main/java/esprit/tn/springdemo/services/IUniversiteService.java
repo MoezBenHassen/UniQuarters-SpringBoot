@@ -9,7 +9,7 @@ public interface IUniversiteService {
 
     Universite addUniversity(Universite u);
 
-    Universite updateUniversity(Universite u);
+    Universite updateUniversity(Universite u,Long id);
 
     Universite retrieveUniversity(long idUniversity);
 

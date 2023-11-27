@@ -12,6 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class Universite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +20,7 @@ public class Universite {
     private String nom;
     private String adresse;
 
-    @OneToOne(mappedBy = "universite", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "universite")
     private Foyer foyer;
 
     @Override
