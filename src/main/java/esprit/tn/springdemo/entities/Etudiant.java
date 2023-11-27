@@ -27,5 +27,8 @@ public class Etudiant {
     @ManyToMany(mappedBy = "etudiants")
     private List<Reservation> reservations;
 
+    @OneToOne
+    private User user;
+
 
 }

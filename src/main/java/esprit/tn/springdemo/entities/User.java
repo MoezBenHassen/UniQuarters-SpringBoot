@@ -1,5 +1,6 @@
 package esprit.tn.springdemo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import esprit.tn.springdemo.token.Token;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,11 +19,12 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
 

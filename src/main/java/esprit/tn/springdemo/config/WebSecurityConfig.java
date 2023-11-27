@@ -20,7 +20,10 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class WebSecurityConfig {
-    private static final String[] WHITE_LIST_URL = {"/auth/**"};
+    private static final String[] WHITE_LIST_URL = {
+            "/auth/**",
+            "/user"
+    };
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
