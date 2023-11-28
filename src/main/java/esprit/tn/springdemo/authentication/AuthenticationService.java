@@ -15,6 +15,7 @@ import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,12 +50,15 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    ));
+        } catch (BadCredentialsException e) {
+            log.info(e.getMessage());
+        }
         User user = null;
         try {
             user = service.findUserByEmail(request.getEmail());
@@ -100,7 +104,7 @@ public class AuthenticationService {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
         refreshToken = authHeader.substring(7);

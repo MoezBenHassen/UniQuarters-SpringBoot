@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 public class WebSecurityConfig {
     private static final String[] WHITE_LIST_URL = {
             "/auth/**",
-            "/user"
+
     };
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
@@ -37,7 +37,7 @@ public class WebSecurityConfig {
                                 .permitAll()
                                 .requestMatchers("/adminexample").hasAnyRole("ADMIN")
                                 .anyRequest()
-                                .authenticated()
+                                .fullyAuthenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

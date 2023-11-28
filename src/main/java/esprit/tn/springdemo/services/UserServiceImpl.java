@@ -45,6 +45,6 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public User findUserByEmail(String email) {
-        return userRepo.findByEmail(email).orElseThrow(() ->  new UsernameNotFoundException("No user found with the email: "+email));
+        return userRepo.findUserByEmail(email).orElseThrow(() ->  new UsernameNotFoundException("No user found with the email: "+email));
     }
 }
