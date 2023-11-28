@@ -1,5 +1,6 @@
 package esprit.tn.springdemo.config;
 
+import esprit.tn.springdemo.entities.User;
 import esprit.tn.springdemo.repositories.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +26,7 @@ public class AppConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> repository.findUserByEmail(username)
+        return username -> repository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 

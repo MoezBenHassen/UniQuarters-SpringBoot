@@ -23,13 +23,11 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public User addUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
 
     @Override
     public User updateUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
 
@@ -45,6 +43,7 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public User findUserByEmail(String email) {
-        return userRepo.findUserByEmail(email).orElseThrow(() ->  new UsernameNotFoundException("No user found with the email: "+email));
+        User u = userRepo.findByEmail(email).orElseThrow(() ->  new UsernameNotFoundException("No user found with the email: "+email));
+        return u;
     }
 }
