@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*")
 @RequestMapping("reservations")
 public class ReservationController {
     private final IReservationService reservationService;
@@ -61,12 +62,29 @@ public class ReservationController {
     }
 
     @PostMapping("/{idChambre}/{cinEtudiant}")
-    public ResponseEntity<ApiResponse> ajouterReservation(@RequestBody Reservation reservation, @PathVariable long idChambre, @PathVariable long cinEtudiant) {
+    public ResponseEntity<ApiResponse> ajouterReservation(@PathVariable long idChambre, @PathVariable long cinEtudiant) {
         ApiResponse apiResponse = new ApiResponse();
         try {
+            Reservation reservation = new Reservation();
+            reservation.setAnneeUniversitaire(java.time.LocalDate.now().withDayOfYear(1));
+            reservation.setEstValide(true);
+
             Reservation addedReservation = reservationService.ajouterReservation(reservation, idChambre, cinEtudiant);
             apiResponse.setResponse(HttpStatus.OK, "Reservation added");
             apiResponse.addData("reservation", addedReservation);
+        } catch (Exception e) {
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+    }
+
+    @DeleteMapping("/{cinEtudiant}")
+    public ResponseEntity<ApiResponse> annulerReservation(@PathVariable long cinEtudiant) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            Reservation annulerReservation = reservationService.annulerReservation(cinEtudiant);
+            apiResponse.setResponse(HttpStatus.OK, "Reservation annulée");
+            apiResponse.addData("reservation", annulerReservation);
         } catch (Exception e) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }

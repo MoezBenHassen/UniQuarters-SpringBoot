@@ -99,8 +99,44 @@ public class ReservationServiceImpl implements IReservationService {
         return savedReservation;
     }
 
+    @Override
+    public Reservation annulerReservation(long cinEtudiant) {
+        Etudiant etudiant = etudiantRepo.getByCin(cinEtudiant);
+        System.out.println("founded etudiant: " + etudiant);
+        if (etudiant == null) {
+            throw new RuntimeException("Etudiant not found");
+        }
+        System.out.println("les reservations de etudiant: " + etudiant.getReservations());
+        Reservation reservation = etudiant.getReservations().get(0);
+        System.out.println("founded reservation: " + reservation);
+        if (reservation == null) {
+            throw new RuntimeException("Reservation not found");
+        }
+        etudiant.getReservations().remove(reservation);
+        Etudiant savedEtudiant = etudiantRepo.save(etudiant);
+        System.out.println("saved etudiant: " + savedEtudiant);
+
+        // desaffecter reservation de chambre
+        Chambre chambre = chambreRepo.findChambreByReservations(reservation);
+        System.out.println("founded chambre: " + chambre);
+        System.out.println("les reservations de chambre: " + chambre.getReservations());
+        if (chambre == null) {
+            throw new RuntimeException("Chambre not found");
+        }
+        chambre.getReservations().remove(reservation);
+        Chambre savedChambre = chambreRepo.save(chambre);
+        System.out.println("saved chambre: " + savedChambre);
+
+        reservation.setEstValide(false);
+        Reservation savedReservation = reservationRepo.save(reservation);
+        entityManager.clear();
+
+        return reservationRepo.findById(savedReservation.getId());
+    }
+
     private String generateId(long idChambre, String nomBloc, long cinEtudiant) {
         return idChambre + "-" + nomBloc + "-" + cinEtudiant;
     }
+
 
 }
