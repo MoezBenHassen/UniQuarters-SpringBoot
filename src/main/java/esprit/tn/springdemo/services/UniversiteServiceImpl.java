@@ -86,4 +86,8 @@ public class UniversiteServiceImpl implements IUniversiteService {
         System.out.println("saved university: " + savedUniversity);
         return savedUniversity;
     }
+    @Override
+    public void removeUniversity(long id) {
+        universiteRepo.deleteById(id);
+    }
 }

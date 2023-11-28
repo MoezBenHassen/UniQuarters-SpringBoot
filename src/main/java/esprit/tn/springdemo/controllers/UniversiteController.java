@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/universites")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
+@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,RequestMethod.DELETE})
 
 public class UniversiteController {
     private final IUniversiteService universiteService;
@@ -54,6 +54,17 @@ public class UniversiteController {
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
 
+    @DeleteMapping ("/{idUniversity}")
+    public ResponseEntity<ApiResponse> deleteUniversity(@PathVariable long idUniversity) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            apiResponse.setResponse(org.springframework.http.HttpStatus.OK, "University deleted");
+            universiteService.removeUniversity(idUniversity);
+        } catch (Exception e) {
+            apiResponse.setResponse(org.springframework.http.HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+    }
     @GetMapping("/{idUniversity}")
     public ResponseEntity<ApiResponse> getUniversity(@PathVariable long idUniversity) {
         ApiResponse apiResponse = new ApiResponse();
@@ -92,5 +103,6 @@ public class UniversiteController {
         }
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
+
 
 }

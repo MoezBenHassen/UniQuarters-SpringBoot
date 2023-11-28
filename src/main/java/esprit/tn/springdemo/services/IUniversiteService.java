@@ -17,4 +17,5 @@ public interface IUniversiteService {
 
 
     public Universite desaffecterFoyerAUniversite(long idUniversite);
+    public void removeUniversity(long id);
 }
