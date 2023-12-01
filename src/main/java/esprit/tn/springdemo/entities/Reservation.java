@@ -31,6 +31,7 @@ public class Reservation {
                 "id='" + id + '\'' +
                 ", anneeUniversitaire=" + anneeUniversitaire +
                 ", estValide=" + estValide +
+                ", etudiants=" + etudiants +
                 '}';
     }
 }
