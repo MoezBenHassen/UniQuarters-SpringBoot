@@ -61,14 +61,30 @@ public class ReservationController {
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
 
+    @PutMapping("/valider/{idReservation}")
+    public ResponseEntity<ApiResponse> validerReservation(@PathVariable String idReservation) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            Reservation foundReservation = reservationService.retrieveReservation(idReservation);
+            if (foundReservation == null) {
+                throw new RuntimeException("Reservation not found");
+            }
+            Reservation updatedReservation = reservationService.validerReservation(idReservation);
+            apiResponse.setResponse(HttpStatus.OK, "Reservation validée");
+            apiResponse.addData("reservation", updatedReservation);
+        } catch (Exception e) {
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+    }
+
     @PostMapping("/{idChambre}/{cinEtudiant}")
     public ResponseEntity<ApiResponse> ajouterReservation(@PathVariable long idChambre, @PathVariable long cinEtudiant) {
         ApiResponse apiResponse = new ApiResponse();
         try {
             Reservation reservation = new Reservation();
             reservation.setAnneeUniversitaire(java.time.LocalDate.now().withDayOfYear(1));
-            reservation.setEstValide(true);
-
+            reservation.setEstValide(false);
             Reservation addedReservation = reservationService.ajouterReservation(reservation, idChambre, cinEtudiant);
             apiResponse.setResponse(HttpStatus.OK, "Reservation added");
             apiResponse.addData("reservation", addedReservation);

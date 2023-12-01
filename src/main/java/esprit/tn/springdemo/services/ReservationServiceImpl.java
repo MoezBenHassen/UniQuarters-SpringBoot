@@ -100,6 +100,20 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     @Override
+    public Reservation validerReservation(String idReservation) {
+        Reservation reservation = reservationRepo.findById(idReservation);
+        System.out.println("founded reservation: " + reservation);
+        if (reservation == null) {
+            throw new RuntimeException("Reservation not found");
+        }
+        reservation.setEstValide(true);
+        System.out.println("saving reservation: " + reservation);
+        Reservation savedReservation = reservationRepo.save(reservation);
+        entityManager.clear();
+        return reservationRepo.findById(savedReservation.getId());
+    }
+
+    @Override
     public Reservation annulerReservation(long cinEtudiant) {
         Etudiant etudiant = etudiantRepo.getByCin(cinEtudiant);
         System.out.println("founded etudiant: " + etudiant);
