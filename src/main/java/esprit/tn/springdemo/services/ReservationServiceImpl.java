@@ -107,7 +107,8 @@ public class ReservationServiceImpl implements IReservationService {
         return savedReservation;
     }
 
-    private Map<String, Object> getReservationDetails(Reservation reservation) {
+    @Override
+    public Map<String, Object> getReservationDetails(Reservation reservation) {
         System.out.println("Reservation details:");
 
         Chambre chambre = chambreRepo.findChambreByReservations(reservation);
@@ -124,25 +125,6 @@ public class ReservationServiceImpl implements IReservationService {
         details.put("etudiants", etudiantsSet); // Put the Set<Etudiant> into the map
 
         return details;
-    }
-
-    private Boolean checkReservationValidation(Reservation reservation, Chambre chambre, Set<Etudiant> etudiants) {
-        System.out.println("checking reservation validation");
-        if (reservation == null) {
-            System.out.println("reservation is null");
-            throw new RuntimeException("Reservation is null");
-        }
-
-        if (chambre == null) {
-            System.out.println("reservation does not have a chambre");
-            throw new RuntimeException("Reservation does not have a chambre");
-        }
-        if (etudiants == null || etudiants.isEmpty()) {
-            System.out.println("reservation does not have etudiants");
-            throw new RuntimeException("Reservation does not have etudiants");
-        }
-        System.out.println("valid reservation");
-        return true;
     }
 
 
@@ -229,5 +211,23 @@ public class ReservationServiceImpl implements IReservationService {
         return idChambre + "-" + nomBloc + "-" + cinEtudiant;
     }
 
+    private Boolean checkReservationValidation(Reservation reservation, Chambre chambre, Set<Etudiant> etudiants) {
+        System.out.println("checking reservation validation");
+        if (reservation == null) {
+            System.out.println("reservation is null");
+            throw new RuntimeException("Reservation is null");
+        }
+
+        if (chambre == null) {
+            System.out.println("reservation does not have a chambre");
+            throw new RuntimeException("Reservation does not have a chambre");
+        }
+        if (etudiants == null || etudiants.isEmpty()) {
+            System.out.println("reservation does not have etudiants");
+            throw new RuntimeException("Reservation does not have etudiants");
+        }
+        System.out.println("valid reservation");
+        return true;
+    }
 
 }
