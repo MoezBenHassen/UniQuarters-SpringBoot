@@ -27,14 +27,24 @@ public class UniversiteServiceImpl implements IUniversiteService {
 
     @Override
     public Universite addUniversity(Universite u) {
+
+        u.getFoyer().setUniversite(u);
+        foyerRepo.save(u.getFoyer());
         return universiteRepo.save(u);
     }
 
     @Override
     public Universite updateUniversity(Universite u,Long id) {
+
         Universite uni =universiteRepo.getById(id);
+        Foyer f= uni.getFoyer();
         uni.setAdresse(u.getAdresse());
+        f.setLat(u.getFoyer().getLat());
+        f.setLng(u.getFoyer().getLng());
         uni.setNom(u.getNom());
+        f.setNom(u.getFoyer().getNom());
+        f.setCapacite(u.getFoyer().getCapacite());
+        foyerRepo.save(f);
         return universiteRepo.save(uni);
     }
 
@@ -89,5 +99,24 @@ public class UniversiteServiceImpl implements IUniversiteService {
     @Override
     public void removeUniversity(long id) {
         universiteRepo.deleteById(id);
+    }
+
+    @Override
+    public List<Universite> getUniversitiesByAddress(String adresse) {
+        return universiteRepo.findUniversitesByAdresseIsLike(adresse);
+    }
+
+    @Override
+    public List<Universite> getUniversitiesByNom(String nom) {
+        return universiteRepo.findUniversitesByNomIsLike(nom);
+    }
+
+    @Override
+    public List<Universite> getUniversitiesByNomFoyer(String nom) {
+        return universiteRepo.findUniversitesByFoyer(nom);
+    }
+    @Override
+    public List<Universite> getUniversitiesSearch(String nom,String add) {
+        return universiteRepo.findUniversitesSearch(nom,add);
     }
 }

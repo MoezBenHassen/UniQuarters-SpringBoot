@@ -19,8 +19,9 @@ public class Universite {
     private Long id;
     private String nom;
     private String adresse;
+    private String image;
 
-    @OneToOne(mappedBy = "universite")
+    @OneToOne(mappedBy = "universite",cascade = CascadeType.ALL)
     private Foyer foyer;
 
     @Override

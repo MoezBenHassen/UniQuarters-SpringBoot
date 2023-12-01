@@ -18,4 +18,9 @@ public interface IUniversiteService {
 
     public Universite desaffecterFoyerAUniversite(long idUniversite);
     public void removeUniversity(long id);
+    public List<Universite> getUniversitiesByAddress(String adresse);
+    public List<Universite> getUniversitiesByNom(String nom);
+    public List<Universite> getUniversitiesByNomFoyer(String nom);
+    public List<Universite> getUniversitiesSearch(String nom,String add);
+
 }
