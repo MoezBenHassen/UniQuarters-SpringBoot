@@ -8,8 +8,7 @@ import java.util.Map;
 public interface IReservationService {
     List<Reservation> retrieveAllReservation();
 
-    Reservation updateReservation(Reservation res);
-
+    public Reservation updateReservation(Reservation updatedReservation, long idChambre, long cinEtudiant);
     Reservation retrieveReservation(String idReservation);
 
     public Reservation ajouterReservation(Reservation reservation, long idChambre, long cinEtudiant);

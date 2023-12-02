@@ -31,9 +31,78 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     @Override
-    public Reservation updateReservation(Reservation res) {
-        return reservationRepo.save(res);
+    public Reservation updateReservation(Reservation updatedReservation, long idChambre, long cinEtudiant) {
+        // Check if the updated reservation exists
+        Reservation existingReservation = reservationRepo.findById(updatedReservation.getId());
+        System.out.println("existing reservation: " + existingReservation);
+        if (existingReservation == null) {
+            throw new RuntimeException("Reservation not found");
+        }
+
+        // Check if the chambre and etudiant are valid
+        Chambre chambre = chambreRepo.getById(idChambre);
+        System.out.println("founded chambre: " + chambre);
+        if (chambre == null) {
+            throw new RuntimeException("Chambre not found");
+        }
+
+        Etudiant etudiant = etudiantRepo.getByCin(cinEtudiant);
+        System.out.println("founded etudiant: " + etudiant);
+        if (etudiant == null) {
+            throw new RuntimeException("Etudiant not found");
+        }
+
+        // Check if the reservation is valid
+        Chambre existingChambre = chambreRepo.findChambreByReservations(existingReservation);
+        System.out.println("founded chambre: " + existingChambre);
+        Boolean resaCheck = this.checkReservationValidation(existingReservation, existingChambre, new HashSet<>(Arrays.asList(etudiant)));
+        System.out.println("reservation validation: " + resaCheck);
+        // Check if the updated reservation conflicts with existing reservations
+        // Check if the updated reservation conflicts with existing reservations
+        // Check if the updated reservation conflicts with existing reservations
+        Reservation conflictingReservation = reservationRepo.findById(updatedReservation.getId());
+        System.out.println("conflicting reservation: " + conflictingReservation);
+        if (
+                conflictingReservation != null &&
+                        !conflictingReservation.equals(existingReservation)
+        ) {
+            System.out.println("Another reservation with the same ID already exists");
+            throw new RuntimeException("Another reservation with the same ID already exists");
+        }
+
+
+        // Remove the existing reservation from etudiant and chambre
+        etudiant.getReservations().remove(existingReservation);
+        chambre.getReservations().remove(existingReservation);
+
+        // Set the new details for the updated reservation
+        //existingReservation.setSomeProperty(updatedReservation.getSomeProperty()); // Update other properties as needed
+
+        // Check if chambre has free places for the updated reservation
+        int chambreFreePlaces = this.getChambreFreePlaces(chambre);
+        System.out.println("chambre free places: " + chambreFreePlaces);
+        if (chambreFreePlaces == 0) {
+            System.out.println("Chambre is full");
+            throw new RuntimeException("Chambre is full");
+        }
+
+        System.out.println("saving reservation: " + existingReservation);
+        // Save the updated reservation
+        Reservation savedReservation = reservationRepo.save(existingReservation);
+        System.out.println("saved reservation: " + savedReservation);
+        // Add the updated reservation to etudiant and chambre
+        System.out.println("adding reservation to etudiant");
+        etudiant.getReservations().add(savedReservation);
+        Etudiant savedEtudiant = etudiantRepo.save(etudiant);
+        System.out.println("saved etudiant: " + savedEtudiant);
+
+        System.out.println("adding reservation to chambre");
+        chambre.getReservations().add(savedReservation);
+        Chambre savedChambre = chambreRepo.save(chambre);
+        System.out.println("saved chambre: " + savedChambre);
+        return savedReservation;
     }
+
 
     @Override
     public Reservation retrieveReservation(String idReservation) {

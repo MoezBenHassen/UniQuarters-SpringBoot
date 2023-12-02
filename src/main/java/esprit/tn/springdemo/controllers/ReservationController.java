@@ -80,16 +80,13 @@ public class ReservationController {
         }
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
-    @PutMapping("/{idReservation}")
-    public ResponseEntity<ApiResponse> updateReservation(@RequestBody Reservation res, @PathVariable String idReservation) {
+
+    @PutMapping("{idReservation}/{idChambre}/{cinEtudiant}")
+    public ResponseEntity<ApiResponse> updateReservation(@RequestBody Reservation res, @PathVariable String idReservation, @PathVariable long idChambre, @PathVariable long cinEtudiant) {
         ApiResponse apiResponse = new ApiResponse();
         try {
-            Reservation foundReservation = reservationService.retrieveReservation(idReservation);
-            if (foundReservation == null) {
-                throw new RuntimeException("Reservation not found");
-            }
             res.setId(idReservation);
-            Reservation updatedReservation = reservationService.updateReservation(res);
+            Reservation updatedReservation = reservationService.updateReservation(res, idChambre, cinEtudiant);
             apiResponse.setResponse(HttpStatus.OK, "Reservation updated");
             apiResponse.addData("reservation", updatedReservation);
         } catch (Exception e) {
