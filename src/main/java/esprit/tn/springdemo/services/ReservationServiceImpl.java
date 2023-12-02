@@ -265,25 +265,49 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     private String generateMailBody(Reservation reservation, Etudiant etudiant, Chambre chambre) {
-        String mailBody = "Bonjour " + etudiant.getPrenom() + " " + etudiant.getNom() + ",\n";
-        mailBody += "Votre reservation a ete validee.\n";
-        mailBody += "Details de la reservation:\n";
-        mailBody += "Annee universitaire: " + reservation.getAnneeUniversitaire() + "\n";
-        mailBody += "Etat de la reservation: " + reservation.getEstValide() + "\n";
-        mailBody += "Détails de la chambre\n";
-        mailBody += "Chambre: " + chambre.getNumero() + "\n";
-        mailBody += "Type: " + chambre.getType() + "\n";
-        mailBody += "Bloc: " + chambre.getBloc().getNom() + "\n";
-        mailBody += "Détails de l'etudiant\n";
-        mailBody += "CIN: " + etudiant.getCin() + "\n";
-        mailBody += "Nom: " + etudiant.getNom() + "\n";
-        mailBody += "Prenom: " + etudiant.getPrenom() + "\n";
-        mailBody += "Date de naissance: " + etudiant.getDateNaissance() + "\n";
-        mailBody += "Ecole: " + etudiant.getEcole() + "\n";
-        mailBody += "Cordialement,\n";
-        mailBody += "Service des reservations";
+        String mailBody = "<html><head><style>";
+        mailBody += "body { font-family: Arial, sans-serif; }";
+        mailBody += "table { width: 100%; border-collapse: collapse; margin-top: 10px; }";
+        mailBody += "th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; }";
+        mailBody += "th { background-color: #f2f2f2; }";
+        mailBody += "</style></head><body>";
+
+        mailBody += "<p>Bonjour " + etudiant.getPrenom() + " " + etudiant.getNom() + ",</p>";
+        mailBody += "<p>Votre réservation a été validée.</p>";
+        mailBody += "<p>Détails de la réservation:</p>";
+
+        // Creating a table for reservation details
+        mailBody += "<table>";
+        mailBody += "<tr><th>Année universitaire</th><td>" + reservation.getAnneeUniversitaire() + "</td></tr>";
+        mailBody += "<tr><th>État de la réservation</th><td>" + reservation.getEstValide() + "</td></tr>";
+        mailBody += "</table>";
+
+        mailBody += "<p>Détails de la chambre:</p>";
+
+        // Creating a table for chambre details
+        mailBody += "<table>";
+        mailBody += "<tr><th>Chambre</th><td>" + chambre.getNumero() + "</td></tr>";
+        mailBody += "<tr><th>Type</th><td>" + chambre.getType() + "</td></tr>";
+        mailBody += "<tr><th>Bloc</th><td>" + chambre.getBloc().getNom() + "</td></tr>";
+        mailBody += "</table>";
+
+        mailBody += "<p>Détails de l'étudiant:</p>";
+
+        // Creating a table for etudiant details
+        mailBody += "<table>";
+        mailBody += "<tr><th>CIN</th><td>" + etudiant.getCin() + "</td></tr>";
+        mailBody += "<tr><th>Nom</th><td>" + etudiant.getNom() + "</td></tr>";
+        mailBody += "<tr><th>Prénom</th><td>" + etudiant.getPrenom() + "</td></tr>";
+        mailBody += "<tr><th>Date de naissance</th><td>" + etudiant.getDateNaissance() + "</td></tr>";
+        mailBody += "<tr><th>École</th><td>" + etudiant.getEcole() + "</td></tr>";
+        mailBody += "</table>";
+
+        mailBody += "<p>Cordialement,<br/>Service des réservations</p>";
+        mailBody += "</body></html>";
+
         return mailBody;
     }
+
 
     @Override
     public Reservation annulerReservation(long cinEtudiant) {
