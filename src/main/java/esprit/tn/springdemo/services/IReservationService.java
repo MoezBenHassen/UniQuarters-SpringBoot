@@ -20,5 +20,5 @@ public interface IReservationService {
 
     Map<String, Object> getReservationDetails(Reservation reservation);
 
-
+    public List<Map<String, Object>> countChambresReservations();
 }

@@ -68,6 +68,18 @@ public class ReservationController {
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
 
+    @GetMapping("ChambresReservations")
+    public ResponseEntity<ApiResponse> getChambresReservations() {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            List<Map<String, Object>> chambresReservations = reservationService.countChambresReservations();
+            apiResponse.setResponse(HttpStatus.OK, "Chambres reservations retrieved");
+            apiResponse.addData("chambresReservations", chambresReservations);
+        } catch (Exception e) {
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+    }
     @PutMapping("/{idReservation}")
     public ResponseEntity<ApiResponse> updateReservation(@RequestBody Reservation res, @PathVariable String idReservation) {
         ApiResponse apiResponse = new ApiResponse();

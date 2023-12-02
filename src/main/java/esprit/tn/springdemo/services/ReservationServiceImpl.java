@@ -3,6 +3,7 @@ package esprit.tn.springdemo.services;
 import esprit.tn.springdemo.entities.Chambre;
 import esprit.tn.springdemo.entities.Etudiant;
 import esprit.tn.springdemo.entities.Reservation;
+import esprit.tn.springdemo.entities.TypeChambre;
 import esprit.tn.springdemo.repositories.ChambreRepo;
 import esprit.tn.springdemo.repositories.EtudiantRepo;
 import esprit.tn.springdemo.repositories.ReservationRepo;
@@ -85,6 +86,14 @@ public class ReservationServiceImpl implements IReservationService {
             //this.checkReservationValidation(existingReservation, chambre, new HashSet<>(Arrays.asList(etudiant)));
         }
         reservation.setId(id);
+
+        // checking chambre free places
+        int chambreFreePlaces = this.getChambreFreePlaces(chambre);
+        System.out.println("chambre free places: " + chambreFreePlaces);
+        if (chambreFreePlaces == 0) {
+            throw new RuntimeException("Chambre is full");
+        }
+
         //System.out.println("les etudiants de entite resa: " + reservation.getEtudiants());
         System.out.println("les reservations de entite etudiant: " + etudiant.getReservations());
         System.out.println("saving reservation: " + reservation);
@@ -125,6 +134,25 @@ public class ReservationServiceImpl implements IReservationService {
         details.put("etudiants", etudiantsSet); // Put the Set<Etudiant> into the map
 
         return details;
+    }
+
+    @Override
+    public List<Map<String, Object>> countChambresReservations() {
+        List<Chambre> chambres = chambreRepo.findAll();
+        List<Map<String, Object>> chambresReservations = new ArrayList<>();
+        chambres.forEach(chambre -> {
+            Map<String, Object> chambreReservations = new HashMap<>();
+            chambreReservations.put("idChambre", chambre.getId());
+            chambreReservations.put("numeroChambre", chambre.getNumero());
+            chambreReservations.put("type", chambre.getType());
+            chambreReservations.put("maxPlaces", this.getChambreMaxPlaces(chambre.getType()));
+            chambreReservations.put("reservationsCount", chambre.getReservations().size());
+            chambreReservations.put("freePlaces", this.getChambreFreePlaces(chambre));
+            //chambreReservations.put("reservations", chambre.getReservations());
+            chambreReservations.put("reservationsIds", chambre.getReservations().stream().map(Reservation::getId).collect(Collectors.toList()));
+            chambresReservations.add(chambreReservations);
+        });
+        return chambresReservations;
     }
 
 
@@ -230,4 +258,29 @@ public class ReservationServiceImpl implements IReservationService {
         return true;
     }
 
+    private int getChambreMaxPlaces(TypeChambre typeChambre) {
+        int maxPlaces;
+        switch (typeChambre) {
+            case SIMPLE:
+                maxPlaces = 1;
+                break;
+            case DOUBLE:
+                maxPlaces = 2;
+                break;
+            case TRIPLE:
+                maxPlaces = 3;
+                break;
+            default:
+                throw new RuntimeException("Invalid chambre type");
+        }
+        return maxPlaces;
+    }
+
+    private int getChambreFreePlaces(Chambre chambre) {
+        int maxPlaces = this.getChambreMaxPlaces(chambre.getType());
+        System.out.println("max places: " + maxPlaces);
+        int reservedPlaces = chambre.getReservations().size();
+        System.out.println("reserved places: " + reservedPlaces);
+        return maxPlaces - reservedPlaces;
+    }
 }
