@@ -7,6 +7,7 @@ import esprit.tn.springdemo.entities.TypeChambre;
 import esprit.tn.springdemo.repositories.ChambreRepo;
 import esprit.tn.springdemo.repositories.EtudiantRepo;
 import esprit.tn.springdemo.repositories.ReservationRepo;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ public class ReservationServiceImpl implements IReservationService {
     private final ReservationRepo reservationRepo;
     private final ChambreRepo chambreRepo;
     private final EtudiantRepo etudiantRepo;
-
+    private final EmailService emailService;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -251,8 +252,37 @@ public class ReservationServiceImpl implements IReservationService {
         reservation.setEstValide(true);
         System.out.println("saving reservation: " + reservation);
         Reservation savedReservation = reservationRepo.save(reservation);
+
+        try {
+            String mailBody = this.generateMailBody(reservation, etudiants.stream().collect(Collectors.toList()).get(0), chambre);
+            System.out.println("mail body: " + mailBody);
+            emailService.sendEmail("medyacine.khouini@esprit.tn", "Reservation validee", mailBody);
+        } catch (MessagingException e) {
+            System.out.println("Error sending email: " + e.getMessage());
+        }
         entityManager.clear();
         return reservationRepo.findById(savedReservation.getId());
+    }
+
+    private String generateMailBody(Reservation reservation, Etudiant etudiant, Chambre chambre) {
+        String mailBody = "Bonjour " + etudiant.getPrenom() + " " + etudiant.getNom() + ",\n";
+        mailBody += "Votre reservation a ete validee.\n";
+        mailBody += "Details de la reservation:\n";
+        mailBody += "Annee universitaire: " + reservation.getAnneeUniversitaire() + "\n";
+        mailBody += "Etat de la reservation: " + reservation.getEstValide() + "\n";
+        mailBody += "Détails de la chambre\n";
+        mailBody += "Chambre: " + chambre.getNumero() + "\n";
+        mailBody += "Type: " + chambre.getType() + "\n";
+        mailBody += "Bloc: " + chambre.getBloc().getNom() + "\n";
+        mailBody += "Détails de l'etudiant\n";
+        mailBody += "CIN: " + etudiant.getCin() + "\n";
+        mailBody += "Nom: " + etudiant.getNom() + "\n";
+        mailBody += "Prenom: " + etudiant.getPrenom() + "\n";
+        mailBody += "Date de naissance: " + etudiant.getDateNaissance() + "\n";
+        mailBody += "Ecole: " + etudiant.getEcole() + "\n";
+        mailBody += "Cordialement,\n";
+        mailBody += "Service des reservations";
+        return mailBody;
     }
 
     @Override

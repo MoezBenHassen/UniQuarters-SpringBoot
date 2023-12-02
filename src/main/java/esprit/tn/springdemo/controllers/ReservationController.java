@@ -136,7 +136,7 @@ public class ReservationController {
                 throw new RuntimeException("Reservation not found");
             }
             Reservation updatedReservation = reservationService.validerReservation(idReservation);
-            apiResponse.setResponse(HttpStatus.OK, "Reservation validée");
+            apiResponse.setResponse(HttpStatus.OK, "Reservation validée avec succès, un email a été envoyé à l'étudiant");
             apiResponse.addData("reservation", updatedReservation);
         } catch (Exception e) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
