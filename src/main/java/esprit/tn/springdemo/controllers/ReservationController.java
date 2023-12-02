@@ -36,7 +36,9 @@ public class ReservationController {
             reservations.forEach(reservation -> {
                 Map<String, Object> reservationDetails = reservationService.getReservationDetails(reservation);
                 Chambre chambre = (Chambre) reservationDetails.get("chambre");
-
+                if (chambre == null) {
+                    return;
+                }
                 // Create a map representing a single reservation with chambre details
                 Map<String, Object> reservationMap = new HashMap<>();
                 reservationMap.put("idReservation", reservation.getId());
@@ -104,10 +106,11 @@ public class ReservationController {
             }
             Map<String, Object> reservationDetails = reservationService.getReservationDetails(reservation);
             Chambre chambre = (Chambre) reservationDetails.get("chambre");
-            Set<Etudiant> etudiants = (Set<Etudiant>) reservationDetails.get("etudiants");
+
             apiResponse.setResponse(HttpStatus.OK, "Reservation retrieved");
             apiResponse.addData("reservation", reservation);
             apiResponse.addData("chambre", filterChambreAttributes(chambre));
+            //Set<Etudiant> etudiants = (Set<Etudiant>) reservationDetails.get("etudiants");
             //apiResponse.addData("etudiants", etudiants);
         } catch (Exception e) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
