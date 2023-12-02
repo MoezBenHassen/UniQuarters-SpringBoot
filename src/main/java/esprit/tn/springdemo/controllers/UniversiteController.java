@@ -1,20 +1,30 @@
 package esprit.tn.springdemo.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import esprit.tn.springdemo.entities.Universite;
 import esprit.tn.springdemo.responses.ApiResponse;
 import esprit.tn.springdemo.services.IFoyerService;
 import esprit.tn.springdemo.services.IUniversiteService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/universites")
 @AllArgsConstructor
+@Slf4j
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,RequestMethod.DELETE})
 
 public class UniversiteController {
+    private final String directory="C:/Users/Administrateur/Documents/Angular-4TWIN/UniQuarters-Angular/src/assets/img";
     private final IUniversiteService universiteService;
     private final IFoyerService foyerService;
 
@@ -31,10 +41,15 @@ public class UniversiteController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ApiResponse> addUniversity(@RequestBody Universite universite) {
+    public ResponseEntity<ApiResponse> addUniversity(@RequestParam("logo") MultipartFile logo,@RequestParam("universite") String u) {
         ApiResponse apiResponse = new ApiResponse();
         try {
-            System.out.println(universite);
+            log.info(u);
+            Universite universite= new ObjectMapper().readValue(u,Universite.class);
+            String fileName = UUID.randomUUID().toString() + "_" + logo.getOriginalFilename();
+            Path targetLocation = Paths.get(directory).resolve(fileName);
+            Files.copy(logo.getInputStream(), targetLocation);
+            universite.setImage(fileName);
             apiResponse.setResponse(org.springframework.http.HttpStatus.CREATED, "University added");
             apiResponse.addData("university", universiteService.addUniversity(universite));
             apiResponse.addData("foyer", foyerService.addFoyer(universite.getFoyer()));
@@ -45,9 +60,15 @@ public class UniversiteController {
     }
 
     @PutMapping("/{idUnivesity}")
-    public ResponseEntity<ApiResponse> updateUniversity(@RequestBody Universite universite, @PathVariable long idUnivesity) {
+    public ResponseEntity<ApiResponse> updateUniversity(@RequestParam(value = "logo", required = false) MultipartFile logo,@RequestParam("universite") String u, @PathVariable long idUnivesity) {
         ApiResponse apiResponse = new ApiResponse();
-        try {
+        try { Universite universite= new ObjectMapper().readValue(u,Universite.class);
+            if(logo!=null) {
+                String fileName = UUID.randomUUID().toString() + "_" + logo.getOriginalFilename();
+                Path targetLocation = Paths.get(directory).resolve(fileName);
+                Files.copy(logo.getInputStream(), targetLocation);
+                universite.setImage(fileName);
+            }
             apiResponse.setResponse(org.springframework.http.HttpStatus.CREATED, "University updated");
             universite.setId(idUnivesity);
             apiResponse.addData("university", universiteService.updateUniversity(universite,idUnivesity));

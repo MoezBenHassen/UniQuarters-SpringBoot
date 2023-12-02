@@ -42,6 +42,10 @@ public class UniversiteServiceImpl implements IUniversiteService {
         f.setLat(u.getFoyer().getLat());
         f.setLng(u.getFoyer().getLng());
         uni.setNom(u.getNom());
+        if(u.getImage()!=null){
+            uni.setImage(u.getImage());
+        }
+
         f.setNom(u.getFoyer().getNom());
         f.setCapacite(u.getFoyer().getCapacite());
         foyerRepo.save(f);
