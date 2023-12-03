@@ -16,6 +16,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/schedule")
+@CrossOrigin(origins = "http://localhost:4200/", allowedHeaders = "*")
 public class TravauxController {
 
     @Autowired

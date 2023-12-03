@@ -31,6 +31,12 @@ public class BlocController {
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
 
+    @GetMapping("/data")
+    public List<Bloc> loadData() {
+        //retrieving data without api response to facilitate consumption via scheduler
+        return iBlocService.retrieveBlocs();
+    }
+
     @PostMapping("")
     public ResponseEntity<ApiResponse> addBloc(@RequestBody Bloc bloc) {
         ApiResponse apiResponse = new ApiResponse();
