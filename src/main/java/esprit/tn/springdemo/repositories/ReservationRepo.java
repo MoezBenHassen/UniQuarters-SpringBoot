@@ -18,5 +18,8 @@ public interface ReservationRepo extends JpaRepository<Reservation, Long> {
     Reservation findById(String idReservation);
     List<Reservation> findReservationsByAnneeUniversitaireBetween(Date anneeUniversitaire1, Date anneeUniversitaire2);
 
+    @Query("SELECT r FROM Reservation r JOIN r.etudiants e WHERE e.id = ?1")
+    Set<Reservation> findReservationsByEtudiants(long idEtudiant);
+
     long countReservationsByAnneeUniversitaireBetween(Date anneeUniversitaire1, Date anneeUniversitaire2);
 }

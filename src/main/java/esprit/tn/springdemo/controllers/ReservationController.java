@@ -1,9 +1,7 @@
 package esprit.tn.springdemo.controllers;
 
-import esprit.tn.springdemo.entities.Bloc;
-import esprit.tn.springdemo.entities.Chambre;
-import esprit.tn.springdemo.entities.Etudiant;
-import esprit.tn.springdemo.entities.Reservation;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import esprit.tn.springdemo.entities.*;
 import esprit.tn.springdemo.repositories.BlocRepo;
 import esprit.tn.springdemo.repositories.ChambreRepo;
 import esprit.tn.springdemo.responses.ApiResponse;
@@ -21,6 +19,8 @@ import java.util.*;
 @RequestMapping("reservations")
 public class ReservationController {
     private final IReservationService reservationService;
+    private ObjectMapper objectMapper; // Autowire the ObjectMapper
+
     /*private final BlocRepo blocRepo;
     private final ChambreRepo chambreRepo;*/
 
@@ -152,7 +152,7 @@ public class ReservationController {
             reservation.setAnneeUniversitaire(java.time.LocalDate.now().withDayOfYear(1));
             reservation.setEstValide(false);
             Reservation addedReservation = reservationService.ajouterReservation(reservation, idChambre, cinEtudiant);
-            apiResponse.setResponse(HttpStatus.OK, "Reservation added");
+            apiResponse.setResponse(HttpStatus.OK, "Réservation ajoutée avec succès");
             apiResponse.addData("reservation", addedReservation);
         } catch (Exception e) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -165,8 +165,36 @@ public class ReservationController {
         ApiResponse apiResponse = new ApiResponse();
         try {
             Reservation annulerReservation = reservationService.annulerReservation(cinEtudiant);
-            apiResponse.setResponse(HttpStatus.OK, "Reservation annulée");
+            apiResponse.setResponse(HttpStatus.OK, "La réservation a été annulée avec succès.");
             apiResponse.addData("reservation", annulerReservation);
+        } catch (Exception e) {
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+    }
+
+    @GetMapping("/etudiant/{idEtudiant}")
+    public ResponseEntity<ApiResponse> getReservationsByEtudiant(@PathVariable long idEtudiant) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            Set<Reservation> reservationsData = reservationService.getReservationsByEtudiant(idEtudiant);
+            System.out.println("reservationsData: " + reservationsData);
+            Set<Map<String, Object>> reservations = new HashSet<>();
+            reservationsData.forEach(
+                    reservation -> {
+                        Map<String, Object> reservationMap = new HashMap<>();
+                        reservationMap.put("idReservation", reservation.getId());
+                        reservationMap.put("anneeUniversitaire", reservation.getAnneeUniversitaire());
+                        reservationMap.put("estValide", reservation.getEstValide());
+                        Map<String, Object> reservationDetails = reservationService.getReservationDetails(reservation);
+                        Chambre chambre = (Chambre) reservationDetails.get("chambre");
+                        reservationMap.put("chambre", filterChambreAttributes(chambre));
+
+                        reservations.add(reservationMap);
+                    }
+            );
+            apiResponse.setResponse(HttpStatus.OK, "Reservations retrieved");
+            apiResponse.addData("reservations", reservations);
         } catch (Exception e) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }

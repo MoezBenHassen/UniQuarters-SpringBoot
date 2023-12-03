@@ -225,6 +225,19 @@ public class ReservationServiceImpl implements IReservationService {
         return chambresReservations;
     }
 
+    @Override
+    public Set<Reservation> getReservationsByEtudiant(long idEtudiant) {
+        Etudiant etudiant = etudiantRepo.getById(idEtudiant);
+        System.out.println("founded etudiant: " + etudiant);
+        if (etudiant == null) {
+            throw new RuntimeException("Etudiant not found");
+        }
+        Set<Reservation> reservations = reservationRepo.findReservationsByEtudiants(etudiant.getId());
+        //Set<Reservation> reservations = etudiant.getReservations();
+        System.out.println("founded reservations: " + reservations);
+        return reservations;
+    }
+
 
     @Override
     public Reservation validerReservation(String idReservation) {

@@ -4,6 +4,7 @@ import esprit.tn.springdemo.entities.Reservation;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface IReservationService {
     List<Reservation> retrieveAllReservation();
@@ -20,4 +21,6 @@ public interface IReservationService {
     Map<String, Object> getReservationDetails(Reservation reservation);
 
     public List<Map<String, Object>> countChambresReservations();
+
+    public Set<Reservation> getReservationsByEtudiant(long idEtudiant);
 }
