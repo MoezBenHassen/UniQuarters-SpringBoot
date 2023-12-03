@@ -32,6 +32,7 @@ public class BlocServiceImpl implements IBlocService {
 
     @Override
     public Bloc addBloc(Bloc bloc) {
+        System.out.println("ADDING BLOC :::: " + bloc);
         return blocRepo.save(bloc);
     }
 

@@ -35,10 +35,11 @@ public class BlocController {
     public ResponseEntity<ApiResponse> addBloc(@RequestBody Bloc bloc) {
         ApiResponse apiResponse = new ApiResponse();
         try {
-            Bloc addedBloc = iBlocService.addBloc(bloc);
+            System.out.println("BLOOOC TO BE ADDDE //// " + bloc);
+            //Bloc addedBloc = iBlocService.addBloc(bloc);
             //throw new RuntimeException("Test exception");
             apiResponse.setResponse(HttpStatus.CREATED, "Bloc added");
-            apiResponse.addData("bloc", addedBloc);
+            apiResponse.addData("bloc", iBlocService.addBloc(bloc));
         } catch (Exception e) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }

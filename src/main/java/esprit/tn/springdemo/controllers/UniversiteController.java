@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/universites")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200/", allowedHeaders = "*")
 public class UniversiteController {
     private final IUniversiteService universiteService;
 
