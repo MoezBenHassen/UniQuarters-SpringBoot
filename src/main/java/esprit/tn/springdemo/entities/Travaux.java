@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200/", allowedHeaders = "*")
 public class Travaux implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
