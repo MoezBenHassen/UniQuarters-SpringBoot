@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-
 @RequiredArgsConstructor
 @RequestMapping("/api/schedule")
 @CrossOrigin(origins = "http://localhost:4200/", allowedHeaders = "*")
@@ -25,12 +24,12 @@ public class TravauxController {
     @Autowired
     private TravauxRepo travauxRepo;
 
-    @RequestMapping(value="/addAudience", method= RequestMethod.POST)
+    @RequestMapping(value="/addTravaux", method= RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Travaux> addAudience(@RequestBody Travaux travaux) {
-        Travaux createdAudience = iTravauxService.addTravaux(travaux);
-        // System.out.println("aaaaaaaaaaaa"+createdAudience.getEndDate());
-        return new ResponseEntity<>(createdAudience, HttpStatus.CREATED);
+    public ResponseEntity<Travaux> addTravaux(@RequestBody Travaux travaux) {
+        Travaux createdTravaux = iTravauxService.addTravaux(travaux);
+        // System.out.println("aaaaaaaaaaaa"+createdTravaux.getEndDate());
+        return new ResponseEntity<>(createdTravaux, HttpStatus.CREATED);
     }
     @GetMapping("/loadData")
     public ResponseEntity<List<Travaux>> loadData() {
@@ -38,34 +37,34 @@ public class TravauxController {
         return ResponseEntity.ok(data);
     }
 
-    @DeleteMapping("/deleteAudience/{id}")
-    public ResponseEntity<String> deleteAudience(@PathVariable int id) {
+    @DeleteMapping("/deleteTravaux/{id}")
+    public ResponseEntity<String> deleteTravaux(@PathVariable int id) {
         try {
             travauxRepo.deleteById(id);
-            return ResponseEntity.ok("Audience deleted successfully");
+            return ResponseEntity.ok("Travaux deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
     }
 
-    @PutMapping("/updateAudience/{id}")
-    public ResponseEntity<Travaux> updateAudience(@PathVariable int id, @RequestBody Travaux updatedAudience) {
-        Travaux existingAudience = travauxRepo.findById(id).get();
+    @PutMapping("/updateTravaux/{id}")
+    public ResponseEntity<Travaux> updateTravaux(@PathVariable int id, @RequestBody Travaux updatedTravaux) {
+        Travaux existingTravaux = travauxRepo.findById(id).get();
 
-        if (existingAudience == null) {
+        if (existingTravaux == null) {
             return ResponseEntity.notFound().build();
         }
-        existingAudience.setText(updatedAudience.getText());
-        existingAudience.setStartDate(updatedAudience.getStartDate());
-        existingAudience.setEndDate(updatedAudience.getEndDate());
-        existingAudience.setDescription(updatedAudience.getDescription());
-        existingAudience.setBloc(updatedAudience.getBloc());
-        existingAudience.setRooms(updatedAudience.getRooms());
-        Travaux updated = iTravauxService.addTravaux(existingAudience);
+        existingTravaux.setText(updatedTravaux.getText());
+        existingTravaux.setStartDate(updatedTravaux.getStartDate());
+        existingTravaux.setEndDate(updatedTravaux.getEndDate());
+        existingTravaux.setDescription(updatedTravaux.getDescription());
+        existingTravaux.setBloc(updatedTravaux.getBloc());
+        existingTravaux.setRooms(updatedTravaux.getRooms());
+        Travaux updated = iTravauxService.addTravaux(existingTravaux);
         return ResponseEntity.ok(updated);
     }
 
-    @GetMapping("/AudienceByLocation/{location}")
+    @GetMapping("/TravauxByLocation/{location}")
     public List<Travaux> getFilteredAppointmentsByLocation(@PathVariable int location) {
         return travauxRepo.findAllByBloc(location);
     }
