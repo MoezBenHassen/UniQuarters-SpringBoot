@@ -1,9 +1,14 @@
 package esprit.tn.springdemo.authentication;
 
+import esprit.tn.springdemo.entities.Etudiant;
+import esprit.tn.springdemo.entities.User;
+import esprit.tn.springdemo.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,16 +24,28 @@ public class AuthenticationEndpoint {
     private final AuthenticationService service;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request
-    ) {
-        return ResponseEntity.ok(service.register(request));
+    public ResponseEntity<ApiResponse> register(@RequestBody Etudiant etudiant) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            apiResponse.addData("added user", service.register(etudiant));
+            apiResponse.setResponse(HttpStatus.CREATED, "Etudiant registered");
+        } catch (Exception ex) {
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
+
     @PostMapping("/authenticate")
-    public ResponseEntity authenticate(
+    public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
-        return ResponseEntity.ok(service.authenticate(request));
+        AuthenticationResponse auth;
+        try {
+            auth = service.authenticate(request);
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(auth);
     }
 
     @PostMapping("/refresh-token")

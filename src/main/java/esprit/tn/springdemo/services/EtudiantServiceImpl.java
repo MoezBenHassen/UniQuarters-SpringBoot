@@ -23,6 +23,11 @@ public class EtudiantServiceImpl implements IEtudiantService {
     }
 
     @Override
+    public Etudiant addEtudiant(Etudiant e) {
+        return etudiantRepo.save(e);
+    }
+
+    @Override
     public Etudiant updateEtudiant(Etudiant e) {
         return etudiantRepo.save(e);
     }

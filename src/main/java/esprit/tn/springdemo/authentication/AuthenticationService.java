@@ -2,8 +2,10 @@ package esprit.tn.springdemo.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import esprit.tn.springdemo.config.JwtService;
+import esprit.tn.springdemo.entities.Etudiant;
 import esprit.tn.springdemo.entities.User;
 import esprit.tn.springdemo.repositories.UserRepo;
+import esprit.tn.springdemo.services.IEtudiantService;
 import esprit.tn.springdemo.services.IUserService;
 import esprit.tn.springdemo.token.Token;
 import esprit.tn.springdemo.token.TokenRepository;
@@ -34,24 +36,19 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final IEtudiantService etudiantService;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public Etudiant register(Etudiant request) {
         var user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .email(request.getUser().getEmail())
+                .password(passwordEncoder.encode(request.getUser().getPassword()))
+                .role(request.getUser().getRole())
                 .build();
-        var savedUser = service.addUser(user);
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(savedUser, jwtToken);
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+        request.setUser(service.addUser(user));
+        return etudiantService.addEtudiant(request);
     }
 
-    public ResponseEntity authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
 
         try {
             authenticationManager.authenticate(
@@ -61,7 +58,7 @@ public class AuthenticationService {
                     ));
         } catch (BadCredentialsException e) {
             log.info(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            throw new BadCredentialsException(e.getMessage());
         }
         User user = null;
         try {
@@ -73,10 +70,10 @@ public class AuthenticationService {
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
-        return new ResponseEntity<>(AuthenticationResponse.builder()
+        return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
-                .build(),HttpStatus.OK);
+                .build();
     }
 
     private void saveUserToken(User user, String jwtToken) {
