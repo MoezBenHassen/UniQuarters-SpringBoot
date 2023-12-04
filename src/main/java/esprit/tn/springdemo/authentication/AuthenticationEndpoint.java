@@ -6,6 +6,7 @@ import esprit.tn.springdemo.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -49,11 +50,14 @@ public class AuthenticationEndpoint {
     }
 
     @PostMapping("/refresh-token")
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
-        service.refreshToken(request, response);
+    public ResponseEntity<String> refreshToken(@RequestBody String refreshToken) {
+        String token;
+        try {
+            token = service.refreshToken(refreshToken);
+        } catch (ChangeSetPersister.NotFoundException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(token);
     }
 
 
