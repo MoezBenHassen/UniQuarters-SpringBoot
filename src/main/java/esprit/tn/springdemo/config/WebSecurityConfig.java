@@ -1,5 +1,6 @@
 package esprit.tn.springdemo.config;
 
+import esprit.tn.springdemo.authentication.AuthenticationEntrypoint;
 import esprit.tn.springdemo.entities.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,7 @@ public class WebSecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
     private final CorsConfigurationSource corsConfigurationSource;
+    private final AuthenticationEntrypoint authenticationEntrypoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,8 +42,8 @@ public class WebSecurityConfig {
                                 .permitAll()
                                 .requestMatchers("/adminexample").hasAnyRole("ADMIN")
                                 .anyRequest()
-                                .fullyAuthenticated()
-                )
+                                .authenticated()
+                ).exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntrypoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
