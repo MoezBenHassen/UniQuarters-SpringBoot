@@ -24,7 +24,7 @@ public class EtudiantController {
         ApiResponse apiResponse = new ApiResponse();
         try {
             apiResponse.setResponse(HttpStatus.CREATED, "Etudiant added");
-            apiResponse.addData("Etudiant", iEtudiantService.addEtudiant(etudiant));
+            apiResponse.addData("etudiant", iEtudiantService.addEtudiant(etudiant));
         } catch (Exception ex) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
         }

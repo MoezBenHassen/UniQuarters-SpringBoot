@@ -35,7 +35,6 @@ import java.util.logging.Logger;
 public class AuthenticationService {
     private final IUserService service;
     private final TokenRepository tokenRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final IEtudiantService etudiantService;
@@ -43,7 +42,7 @@ public class AuthenticationService {
     public Etudiant register(Etudiant request) {
         var user = User.builder()
                 .email(request.getUser().getEmail())
-                .password(passwordEncoder.encode(request.getUser().getPassword()))
+                .password(request.getUser().getPassword())
                 .role(request.getUser().getRole())
                 .build();
         request.setUser(service.addUser(user));

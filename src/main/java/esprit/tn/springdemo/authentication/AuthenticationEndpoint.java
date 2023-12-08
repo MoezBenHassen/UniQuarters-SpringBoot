@@ -2,6 +2,7 @@ package esprit.tn.springdemo.authentication;
 
 import esprit.tn.springdemo.entities.Etudiant;
 import esprit.tn.springdemo.entities.User;
+import esprit.tn.springdemo.repositories.UserRepo;
 import esprit.tn.springdemo.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,10 +11,7 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -23,6 +21,7 @@ import java.io.IOException;
 public class AuthenticationEndpoint {
 
     private final AuthenticationService service;
+    private final UserRepo userRepo;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody Etudiant etudiant) {
@@ -58,6 +57,12 @@ public class AuthenticationEndpoint {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(token);
+    }
+
+    @GetMapping("/emailAlreadyExists/{email}")
+    public String emailExists(@PathVariable String email){
+        User u = userRepo.findByEmail(email).orElse(null);
+        return u == null ? null : u.getEmail();
     }
 
 

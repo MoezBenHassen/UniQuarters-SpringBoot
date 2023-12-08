@@ -1,5 +1,6 @@
 package esprit.tn.springdemo.services;
 
+import esprit.tn.springdemo.entities.Role;
 import esprit.tn.springdemo.entities.User;
 import esprit.tn.springdemo.repositories.UserRepo;
 import lombok.AllArgsConstructor;
@@ -13,21 +14,22 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements IUserService{
+public class UserServiceImpl implements IUserService {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
+
     @Override
-    public List<User> getAllUsers() {
-        return (userRepo.findAll().isEmpty() ?  null : userRepo.findAll());
-    }
+    public List<User> getAllUsers() {return (userRepo.findAll().isEmpty() ? null : userRepo.findAll());}
 
     @Override
     public User addUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
 
     @Override
     public User updateUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
 
@@ -43,7 +45,12 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public User findUserByEmail(String email) {
-        User u = userRepo.findByEmail(email).orElseThrow(() ->  new UsernameNotFoundException("No user found with the email: "+email));
+        User u = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("No user found with the email: " + email));
         return u;
+    }
+
+    @Override
+    public List<User> getUsersByRole(Role role) {
+        return userRepo.findByRole(role);
     }
 }

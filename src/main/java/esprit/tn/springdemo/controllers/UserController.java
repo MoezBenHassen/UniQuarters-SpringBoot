@@ -1,5 +1,6 @@
 package esprit.tn.springdemo.controllers;
 
+import esprit.tn.springdemo.entities.Role;
 import esprit.tn.springdemo.entities.User;
 import esprit.tn.springdemo.responses.ApiResponse;
 import esprit.tn.springdemo.services.IUserService;
@@ -22,7 +23,7 @@ public class UserController {
         try {
             List<User> Users = iUserService.getAllUsers();
             apiResponse.setResponse(HttpStatus.OK, "Users retrieved");
-            apiResponse.addData("Users", Users);
+            apiResponse.addData("users", Users);
         } catch (Exception e) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -36,7 +37,7 @@ public class UserController {
             User addedUser = iUserService.addUser(user);
             //throw new RuntimeException("Test exception");
             apiResponse.setResponse(HttpStatus.CREATED, "User added");
-            apiResponse.addData("User", addedUser);
+            apiResponse.addData("user", addedUser);
         } catch (Exception ex) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
@@ -53,7 +54,7 @@ public class UserController {
             } else {
                 User updatedUser = iUserService.updateUser(user);
                 apiResponse.setResponse(HttpStatus.OK, "User updated");
-                apiResponse.addData("User", updatedUser);
+                apiResponse.addData("user", updatedUser);
             }
 
         } catch (Exception e) {
@@ -71,7 +72,7 @@ public class UserController {
                 apiResponse.setResponse(HttpStatus.NOT_FOUND, "User not found");
             } else {
                 apiResponse.setResponse(HttpStatus.OK, "User retrieved");
-                apiResponse.addData("User", User);
+                apiResponse.addData("user", User);
             }
         } catch (Exception e) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -96,4 +97,18 @@ public class UserController {
         }
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
+
+    @GetMapping("/role/{role}")
+    public ResponseEntity<ApiResponse> getUsersByRole(@PathVariable Role role) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            List<User> Users = iUserService.getUsersByRole(role);
+            apiResponse.setResponse(HttpStatus.OK, "Users retrieved");
+            apiResponse.addData("users", Users);
+        } catch (Exception e) {
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+    }
+
 }

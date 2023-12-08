@@ -1,5 +1,6 @@
 package esprit.tn.springdemo.services;
 
+import esprit.tn.springdemo.entities.Role;
 import esprit.tn.springdemo.entities.User;
 import esprit.tn.springdemo.entities.User;
 
@@ -13,4 +14,5 @@ public interface IUserService {
     User retrieveUser(long idUser);
     void removeUser(long idUser);
     User findUserByEmail(String email) throws Exception;
+    List<User> getUsersByRole(Role role);
 }
