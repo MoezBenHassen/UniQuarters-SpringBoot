@@ -33,75 +33,7 @@ public class ReservationServiceImpl implements IReservationService {
 
     @Override
     public Reservation updateReservation(Reservation updatedReservation, long idChambre, long cinEtudiant) {
-        // Check if the updated reservation exists
-        Reservation existingReservation = reservationRepo.findById(updatedReservation.getId());
-        System.out.println("existing reservation: " + existingReservation);
-        if (existingReservation == null) {
-            throw new RuntimeException("Reservation not found");
-        }
-
-        // Check if the chambre and etudiant are valid
-        Chambre chambre = chambreRepo.getById(idChambre);
-        System.out.println("founded chambre: " + chambre);
-        if (chambre == null) {
-            throw new RuntimeException("Chambre not found");
-        }
-
-        Etudiant etudiant = etudiantRepo.getByCin(cinEtudiant);
-        System.out.println("founded etudiant: " + etudiant);
-        if (etudiant == null) {
-            throw new RuntimeException("Etudiant not found");
-        }
-
-        // Check if the reservation is valid
-        Chambre existingChambre = chambreRepo.findChambreByReservations(existingReservation);
-        System.out.println("founded chambre: " + existingChambre);
-        Boolean resaCheck = this.checkReservationValidation(existingReservation, existingChambre, new HashSet<>(Arrays.asList(etudiant)));
-        System.out.println("reservation validation: " + resaCheck);
-        // Check if the updated reservation conflicts with existing reservations
-        // Check if the updated reservation conflicts with existing reservations
-        // Check if the updated reservation conflicts with existing reservations
-        Reservation conflictingReservation = reservationRepo.findById(updatedReservation.getId());
-        System.out.println("conflicting reservation: " + conflictingReservation);
-        if (
-                conflictingReservation != null &&
-                        !conflictingReservation.equals(existingReservation)
-        ) {
-            System.out.println("Another reservation with the same ID already exists");
-            throw new RuntimeException("Another reservation with the same ID already exists");
-        }
-
-
-        // Remove the existing reservation from etudiant and chambre
-        etudiant.getReservations().remove(existingReservation);
-        chambre.getReservations().remove(existingReservation);
-
-        // Set the new details for the updated reservation
-        //existingReservation.setSomeProperty(updatedReservation.getSomeProperty()); // Update other properties as needed
-
-        // Check if chambre has free places for the updated reservation
-        int chambreFreePlaces = this.getChambreFreePlaces(chambre);
-        System.out.println("chambre free places: " + chambreFreePlaces);
-        if (chambreFreePlaces == 0) {
-            System.out.println("Chambre is full");
-            throw new RuntimeException("Chambre is full");
-        }
-
-        System.out.println("saving reservation: " + existingReservation);
-        // Save the updated reservation
-        Reservation savedReservation = reservationRepo.save(existingReservation);
-        System.out.println("saved reservation: " + savedReservation);
-        // Add the updated reservation to etudiant and chambre
-        System.out.println("adding reservation to etudiant");
-        etudiant.getReservations().add(savedReservation);
-        Etudiant savedEtudiant = etudiantRepo.save(etudiant);
-        System.out.println("saved etudiant: " + savedEtudiant);
-
-        System.out.println("adding reservation to chambre");
-        chambre.getReservations().add(savedReservation);
-        Chambre savedChambre = chambreRepo.save(chambre);
-        System.out.println("saved chambre: " + savedChambre);
-        return savedReservation;
+        throw new RuntimeException("Not implemented yet");
     }
 
 
@@ -135,34 +67,19 @@ public class ReservationServiceImpl implements IReservationService {
 
         // check if reservation already exists
         Reservation existingReservation = reservationRepo.findById(id);
-        if (existingReservation != null) {
-            Boolean resaIsValide = existingReservation.getEstValide();
-            if (resaIsValide == true) {
-                throw new RuntimeException("Reservation already exists and it is valid");
-            }
-            System.out.println("reservation already exists but it is not valid");
-            if (chambre.getReservations().contains(existingReservation) && etudiant.getReservations().contains(existingReservation)) {
-                throw new RuntimeException("Reservation already exists for this chambre and this etudiant");
-            }
 
-            if (chambre.getReservations().contains(existingReservation)) {
-                //throw new RuntimeException("Chambre already contains this reservation");
-                throw new RuntimeException("There is already a reservation for this chambre");
-            }
-            if (etudiant.getReservations().contains(existingReservation)) {
-                //throw new RuntimeException("Etudiant already have this reservation");
-                throw new RuntimeException("This etudiant already have a reservation");
-            }
-            //this.checkReservationValidation(existingReservation, chambre, new HashSet<>(Arrays.asList(etudiant)));
+        if (existingReservation != null) {
+            throw new RuntimeException("There is already a reservation with this chambre: " + chambre.getNumero() + " and this etudiant " + etudiant.getCin());
         }
+
         reservation.setId(id);
 
         // checking chambre free places
-        int chambreFreePlaces = this.getChambreFreePlaces(chambre);
+        /*int chambreFreePlaces = this.getChambreFreePlaces(chambre);
         System.out.println("chambre free places: " + chambreFreePlaces);
         if (chambreFreePlaces == 0) {
             throw new RuntimeException("Chambre is full");
-        }
+        }*/
 
         //System.out.println("les etudiants de entite resa: " + reservation.getEtudiants());
         System.out.println("les reservations de entite etudiant: " + etudiant.getReservations());
@@ -253,12 +170,32 @@ public class ReservationServiceImpl implements IReservationService {
             throw new RuntimeException("Reservation is already valid");
         }
 
+
         System.out.println("Reservation details: " + this.getReservationDetails(reservation));
         Map<String, Object> reservationDetails = getReservationDetails(reservation);
-
+        Set<Etudiant> etudiants = (Set<Etudiant>) reservationDetails.get("etudiants");
+        System.out.println("etudiants x1: " + etudiants);
+        Etudiant etudiant = etudiants.stream().collect(Collectors.toList()).get(0);
+        System.out.println("etudiant x2: " + etudiant);
+        // check if edudiant has already a valid reservation
+        Set<Reservation> etudiantReservations = etudiant.getReservations();
+        System.out.println("etudiant reservations x3: " + etudiantReservations);
+        // check if edudiant has already a valid reservation using .some like js
+        boolean hasValidReservation = etudiantReservations.stream().anyMatch(resa -> resa.getEstValide() == true);
+        System.out.println("has valid reservation: " + hasValidReservation);
+        if (hasValidReservation) {
+            throw new RuntimeException("Etudiant has already a valid reservation");
+        }
         Chambre chambre = (Chambre) reservationDetails.get("chambre");
 
-        Set<Etudiant> etudiants = (Set<Etudiant>) reservationDetails.get("etudiants");
+
+        // checking chambre free places
+        int chambreFreePlaces = this.getChambreFreePlaces(chambre);
+        System.out.println("chambre free places: " + chambreFreePlaces);
+        if (chambreFreePlaces == 0) {
+            throw new RuntimeException("Chambre is full");
+        }
+
 
         Boolean resaValidation = this.checkReservationValidation(reservation, chambre, etudiants);
         System.out.println("reservation validation: " + resaValidation);
@@ -267,7 +204,7 @@ public class ReservationServiceImpl implements IReservationService {
         Reservation savedReservation = reservationRepo.save(reservation);
 
         try {
-            String mailBody = this.generateMailBody(reservation, etudiants.stream().collect(Collectors.toList()).get(0), chambre);
+            String mailBody = this.generateMailBody(reservation, etudiant, chambre);
             System.out.println("mail body: " + mailBody);
             emailService.sendEmail("medyacine.khouini@esprit.tn", "Reservation validee", mailBody);
         } catch (MessagingException e) {
@@ -334,8 +271,10 @@ public class ReservationServiceImpl implements IReservationService {
         if (reservations == null || reservations.isEmpty()) {
             throw new RuntimeException("Etudiant does not have reservations");
         }
-        Reservation reservation = reservations.stream().collect(Collectors.toList()).get(0);
+        Reservation reservation = reservations.stream().collect(Collectors.toList()).stream().filter(resa -> resa.getEstValide() == true).collect(Collectors.toList()).get(0);
+        System.out.println("reservation to cancel: " + reservation);
         if (reservation.getEstValide() == false) {
+            System.out.println("Reservation is already invalid");
             throw new RuntimeException("Reservation is already invalid");
         }
         System.out.println("founded reservation: " + reservation);
@@ -415,7 +354,10 @@ public class ReservationServiceImpl implements IReservationService {
     private int getChambreFreePlaces(Chambre chambre) {
         int maxPlaces = this.getChambreMaxPlaces(chambre.getType());
         System.out.println("max places: " + maxPlaces);
-        int reservedPlaces = chambre.getReservations().size();
+        int reservedPlaces = chambre.getReservations().stream() // only valid reservation
+                .filter(reservation -> reservation.getEstValide() == true)
+                .mapToInt(reservation -> reservation.getEtudiants().size())
+                .sum();
         System.out.println("reserved places: " + reservedPlaces);
         return maxPlaces - reservedPlaces;
     }
