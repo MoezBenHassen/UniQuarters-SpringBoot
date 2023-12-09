@@ -189,7 +189,6 @@ public class ReservationController {
                         Map<String, Object> reservationDetails = reservationService.getReservationDetails(reservation);
                         Chambre chambre = (Chambre) reservationDetails.get("chambre");
                         reservationMap.put("chambre", filterChambreAttributes(chambre));
-
                         reservations.add(reservationMap);
                     }
             );
