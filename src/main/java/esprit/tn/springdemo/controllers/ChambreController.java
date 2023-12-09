@@ -1,6 +1,9 @@
 package esprit.tn.springdemo.controllers;
 
+import esprit.tn.springdemo.dto.ChambreDTO;
+import esprit.tn.springdemo.entities.Bloc;
 import esprit.tn.springdemo.entities.Chambre;
+import esprit.tn.springdemo.entities.TypeChambre;
 import esprit.tn.springdemo.responses.ApiResponse;
 import esprit.tn.springdemo.services.IChambreService;
 import lombok.AllArgsConstructor;
@@ -12,29 +15,27 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/chambres")
+@RequestMapping("/api/chambres")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,RequestMethod.DELETE})
+
 public class ChambreController {
+
     private final IChambreService iChambreService;
 
     @GetMapping("")
     public ResponseEntity<ApiResponse> retrieveChambres(@RequestParam(required = false) String nomBloc) {
         ApiResponse apiResponse = new ApiResponse();
         List<Chambre> chambres;
-        Boolean isNomBlocProvided = nomBloc != null && !nomBloc.isEmpty();
+
         try {
-            if (isNomBlocProvided) {
+            if (nomBloc != null && !nomBloc.isEmpty()) {
                 chambres = iChambreService.getCChambresByNomBloc(nomBloc);
             } else {
                 chambres = iChambreService.retrieveAllChambres();
             }
-            Boolean isChambresEmpty = chambres == null || chambres.isEmpty();
-            String message = !isNomBlocProvided ? "Chambres retrieved" : "Chambres retrieved by bloc";
-            HttpStatus httpStatus = (isChambresEmpty) ? HttpStatus.NOT_FOUND : HttpStatus.OK;
-            if (isChambresEmpty) {
-                message += " (empty)";
-            }
-            apiResponse.setResponse(httpStatus, message);
+
+            apiResponse.setResponse(HttpStatus.OK, "Chambres retrieved");
             apiResponse.addData("chambres", chambres);
         } catch (Exception e) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -49,7 +50,6 @@ public class ChambreController {
         ApiResponse apiResponse = new ApiResponse();
         try {
             Chambre addedChambre = iChambreService.addChambre(c);
-            //throw new RuntimeException("Test exception");
             apiResponse.setResponse(org.springframework.http.HttpStatus.CREATED, "Chambre added");
             apiResponse.addData("chambre", addedChambre);
         } catch (Exception e) {
@@ -92,7 +92,6 @@ public class ChambreController {
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
 
-
     @PostMapping("/affecterABloc/{idChambre}/{nomBloc}")
     public ResponseEntity<ApiResponse> afftecterChambreABloc(@PathVariable long idChambre, @PathVariable String nomBloc) {
         ApiResponse apiResponse = new ApiResponse();
@@ -106,20 +105,66 @@ public class ChambreController {
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
 
-    /*@GetMapping("ChambreByReservationAnneeUniversitaire/{dateDebut}/{dateFin}")
-    public List<Chambre> getChambreByReservationAnneeUniversitaire(@PathVariable Date dateDebut, @PathVariable Date dateFin) {
-        return iChambreService.getChambreByReservationAnneeUniversitaire(dateDebut, dateFin);
-    }*
-     */
-    @GetMapping("byReservationAnneeUniversitaire/{dateDebut}/{dateFin}")
-    public ResponseEntity<ApiResponse> getChambreByReservationAnneeUniversitaire(@PathVariable LocalDate dateDebut, @PathVariable LocalDate dateFin) {
+//    @GetMapping("/details")
+//    public ResponseEntity<ApiResponse> getChambresWithDetails() {
+//        ApiResponse apiResponse = new ApiResponse();
+//        try {
+//            List<ChambreDTO> chambresWithDetails = iChambreService.getChambresWithDetails();
+//            apiResponse.setResponse(HttpStatus.OK, "Chambres with details retrieved");
+//            apiResponse.addData("chambres", chambresWithDetails);
+//        } catch (Exception e) {
+//            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+//        }
+//        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+//    }
+
+    @GetMapping("/available")
+    public ResponseEntity<ApiResponse> getAvailableChambres() {
         ApiResponse apiResponse = new ApiResponse();
         try {
-            List<Chambre> chambres = iChambreService.getChambreByReservationAnneeUniversitaire(dateDebut, dateFin);
-            apiResponse.setResponse(org.springframework.http.HttpStatus.OK, "Chambres retrieved");
-            apiResponse.addData("chambres", chambres);
+            List<Chambre> availableChambres = iChambreService.getAvailableChambres();
+            apiResponse.setResponse(HttpStatus.OK, "Available chambres retrieved");
+            apiResponse.addData("chambres", availableChambres);
         } catch (Exception e) {
-            apiResponse.setResponse(org.springframework.http.HttpStatus.BAD_REQUEST, e.getMessage());
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+    }
+
+    @GetMapping("/byType")
+    public ResponseEntity<ApiResponse> getChambresByType(@RequestParam TypeChambre type) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            List<Chambre> chambresByType = iChambreService.getChambresByType(type);
+            apiResponse.setResponse(HttpStatus.OK, "Chambres by type retrieved");
+            apiResponse.addData("chambres", chambresByType);
+        } catch (Exception e) {
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+    }
+
+    @GetMapping("/withReservations")
+    public ResponseEntity<ApiResponse> getChambresWithReservations() {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            List<Chambre> chambresWithReservations = iChambreService.getChambresWithReservations();
+            apiResponse.setResponse(HttpStatus.OK, "Chambres with reservations retrieved");
+            apiResponse.addData("chambres", chambresWithReservations);
+        } catch (Exception e) {
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+    }
+
+    @DeleteMapping("/{idChambre}")
+    public ResponseEntity<ApiResponse> deleteChambre(@PathVariable long idChambre) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            iChambreService.deleteChambre(idChambre);
+            apiResponse.setResponse(HttpStatus.OK, "Chambre deleted");
+        } catch (Exception e) {
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
