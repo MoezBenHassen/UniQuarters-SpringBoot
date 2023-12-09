@@ -13,6 +13,8 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("reservations")
+@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,RequestMethod.DELETE})
+
 public class ReservationController {
     private final IReservationService reservationService;
 
