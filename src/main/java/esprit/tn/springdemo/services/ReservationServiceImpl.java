@@ -128,15 +128,16 @@ public class ReservationServiceImpl implements IReservationService {
         List<Chambre> chambres = chambreRepo.findAll();
         List<Map<String, Object>> chambresReservations = new ArrayList<>();
         chambres.forEach(chambre -> {
+            List<Reservation> validReservations = chambre.getReservations().stream().filter(reservation -> reservation.getEstValide() == true).collect(Collectors.toList());
             Map<String, Object> chambreReservations = new HashMap<>();
-            chambreReservations.put("idChambre", chambre.getId());
-            chambreReservations.put("numeroChambre", chambre.getNumero());
-            chambreReservations.put("type", chambre.getType());
+            //delete reservation property from chambre
             chambreReservations.put("maxPlaces", this.getChambreMaxPlaces(chambre.getType()));
-            chambreReservations.put("reservationsCount", chambre.getReservations().size());
             chambreReservations.put("freePlaces", this.getChambreFreePlaces(chambre));
+            chambreReservations.put("reservationsCount", validReservations.size());
             //chambreReservations.put("reservations", chambre.getReservations());
-            chambreReservations.put("reservationsIds", chambre.getReservations().stream().map(Reservation::getId).collect(Collectors.toList()));
+            chambreReservations.put("reservationsIds", validReservations.stream().map(Reservation::getId).collect(Collectors.toList()));
+            chambre.setReservations(null);
+            chambreReservations.put("chambre", chambre);
             chambresReservations.add(chambreReservations);
         });
         return chambresReservations;

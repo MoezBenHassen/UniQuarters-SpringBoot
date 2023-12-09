@@ -73,7 +73,7 @@ public class ReservationController {
         ApiResponse apiResponse = new ApiResponse();
         try {
             List<Map<String, Object>> chambresReservations = reservationService.countChambresReservations();
-            apiResponse.setResponse(HttpStatus.OK, "Chambres reservations retrieved");
+            apiResponse.setResponse(HttpStatus.OK, "Chambres reservations statistics retrieved");
             apiResponse.addData("chambresReservations", chambresReservations);
         } catch (Exception e) {
             apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
