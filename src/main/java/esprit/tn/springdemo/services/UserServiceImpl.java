@@ -29,7 +29,6 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User updateUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
 
@@ -53,4 +52,12 @@ public class UserServiceImpl implements IUserService {
     public List<User> getUsersByRole(Role role) {
         return userRepo.findByRole(role);
     }
+
+    @Override
+    public void updatePassword(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepo.save(user);
+    }
+
+
 }

@@ -15,4 +15,5 @@ public interface IUserService {
     void removeUser(long idUser);
     User findUserByEmail(String email) throws Exception;
     List<User> getUsersByRole(Role role);
+    void updatePassword(User user);
 }

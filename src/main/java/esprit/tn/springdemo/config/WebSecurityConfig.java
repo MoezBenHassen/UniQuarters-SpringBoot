@@ -24,7 +24,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class WebSecurityConfig {
     private static final String[] WHITE_LIST_URL = {
             "/auth/**",
-
+            "/password-reset/**"
     };
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
