@@ -27,7 +27,8 @@ public class Chambre {
     private TypeChambre type;
 
 
-    @JsonIgnore
+
+    /*@JsonIgnore*/
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Bloc bloc;
 
