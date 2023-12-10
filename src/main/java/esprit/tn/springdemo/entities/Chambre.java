@@ -18,8 +18,11 @@ public class Chambre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private long numero;
+    private long capacity;
+    private String description;
+
+
     @Enumerated(EnumType.STRING)
     private TypeChambre type;
 
@@ -29,19 +32,31 @@ public class Chambre {
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Bloc bloc;
 
-
-    //@JsonManagedReference
     @OneToMany
     private Set<Reservation> reservations;
 
+
+    // Constructors, getters, and setters
+    @Transient
+    private boolean isAvailable;
+    public boolean calculateAvailability() {
+        int numberOfReservations = reservations.size();
+        return numberOfReservations < capacity;
+    }
+
+    public void updateAvailability() {
+        this.isAvailable = calculateAvailability();
+    }
     @Override
     public String toString() {
         return "Chambre{" +
                 "id=" + id +
                 ", numero=" + numero +
-                ", type=" + type +
-                //", bloc=" + bloc +
-                //", reservations=" + reservations +
+                ", capacity=" + capacity +
+                ", isAvailable=" + isAvailable +
+                ", description='" + description + '\'' +
+                ", chambreType=" + type +
+                ", reservations=" + reservations +
                 '}';
     }
 }
