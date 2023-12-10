@@ -20,13 +20,16 @@ public class Bloc {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nom;
+    private String text;
+    private String color;
     private String capacite;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Foyer foyer;
-
+  
     @OneToMany(mappedBy = "bloc")
-    @JsonIgnore //zedt json ignore
+    @JsonIgnore
+  
     private List<Chambre> chambres;
 
     @Override
