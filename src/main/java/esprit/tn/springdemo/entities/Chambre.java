@@ -31,7 +31,7 @@ public class Chambre {
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Bloc bloc;
 
-    @OneToMany(mappedBy = "chambre", cascade = CascadeType.ALL)
+    @OneToMany
     private Set<Reservation> reservations;
 
 

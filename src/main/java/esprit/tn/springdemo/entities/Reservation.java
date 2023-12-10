@@ -22,9 +22,6 @@ public class Reservation {
     private LocalDate anneeUniversitaire;
     private Boolean estValide;
 
-    @ManyToOne
-    @JoinColumn(name = "chambre_id")
-    private Chambre chambre;
 
     @ManyToMany
     private List<Etudiant> etudiants;
