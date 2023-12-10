@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/etudiants")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*")
 public class EtudiantController {
     private final IEtudiantService iEtudiantService;
 

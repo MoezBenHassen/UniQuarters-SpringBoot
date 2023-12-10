@@ -27,11 +27,14 @@ public class BlocServiceImpl implements IBlocService {
 
     @Override
     public Bloc updateBloc(Bloc bloc) {
+        bloc.setText(bloc.getNom());
         return blocRepo.save(bloc);
     }
 
     @Override
     public Bloc addBloc(Bloc bloc) {
+        System.out.println("ADDING BLOC :::: " + bloc);
+        bloc.setText(bloc.getNom());
         return blocRepo.save(bloc);
     }
 

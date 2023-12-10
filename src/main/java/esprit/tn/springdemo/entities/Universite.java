@@ -6,20 +6,23 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.core.serializer.Serializer;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class Universite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nom;
     private String adresse;
+    private String image;
 
-    @OneToOne(mappedBy = "universite", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "universite",cascade = CascadeType.ALL)
     private Foyer foyer;
 
     @Override

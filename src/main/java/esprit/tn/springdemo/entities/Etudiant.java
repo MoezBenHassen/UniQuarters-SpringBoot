@@ -1,10 +1,12 @@
 package esprit.tn.springdemo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,10 +25,23 @@ public class Etudiant {
     Date dateNaissance;
 
     @ManyToMany(mappedBy = "etudiants")
-    private List<Reservation> reservations;
+    @JsonIgnore
+    private Set<Reservation> reservations;
 
     @OneToOne
     private User user;
 
 
+
+    @Override
+    public String toString() {
+        return "Etudiant{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", cin=" + cin +
+                ", ecole='" + ecole + '\'' +
+                ", dateNaissance=" + dateNaissance +
+                '}';
+    }
 }
