@@ -56,7 +56,6 @@ public class Chambre {
                 ", isAvailable=" + isAvailable +
                 ", description='" + description + '\'' +
                 ", chambreType=" + type +
-                ", bloc=" + bloc +
                 ", reservations=" + reservations +
                 '}';
     }
