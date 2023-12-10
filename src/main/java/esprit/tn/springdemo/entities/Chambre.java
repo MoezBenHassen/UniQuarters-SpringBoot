@@ -18,7 +18,7 @@ public class Chambre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private long chambreNumber;
+    private long numero;
     private long capacity;
     private String description;
 
@@ -51,7 +51,7 @@ public class Chambre {
     public String toString() {
         return "Chambre{" +
                 "id=" + id +
-                ", chambreNumber=" + chambreNumber +
+                ", numero=" + numero +
                 ", capacity=" + capacity +
                 ", isAvailable=" + isAvailable +
                 ", description='" + description + '\'' +

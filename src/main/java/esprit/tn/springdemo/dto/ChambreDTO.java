@@ -3,7 +3,7 @@ import esprit.tn.springdemo.entities.TypeChambre;
 
 public class ChambreDTO {
     private Long id;
-    private long chambreNumber;
+    private long numero;
     private long capacity;
     private String description;
     private TypeChambre type;
@@ -17,7 +17,7 @@ public class ChambreDTO {
     public String toString() {
         return "ChambreWithDetailsDTO{" +
                 "id=" + id +
-                ", chambreNumber=" + chambreNumber +
+                ", numero=" + numero +
                 ", capacity=" + capacity +
                 ", description='" + description + '\'' +
                 ", chambreType=" + type +
