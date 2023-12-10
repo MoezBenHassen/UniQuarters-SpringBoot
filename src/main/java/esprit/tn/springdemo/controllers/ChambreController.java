@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/chambres")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200/", allowedHeaders = "*")
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*")
 public class ChambreController {
     private final IChambreService iChambreService;
 
