@@ -49,7 +49,6 @@ public class EtudiantController {
         ApiResponse apiResponse = new ApiResponse();
         try {
             List<Etudiant> addedEtudiants = iEtudiantService.addEtudiants(etudiants);
-            //throw new RuntimeException("Test exception");
             apiResponse.setResponse(HttpStatus.CREATED, "Etudiants added");
             apiResponse.addData("etudiants", addedEtudiants);
         } catch (Exception ex) {
@@ -58,16 +57,14 @@ public class EtudiantController {
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
 
-    @PutMapping("/{idEtudiant}")
-    public ResponseEntity<ApiResponse> updateEtudiant(@RequestBody Etudiant etudiant, @PathVariable long idEtudiant) {
+    @PutMapping("")
+    public ResponseEntity<ApiResponse> updateEtudiant(@RequestBody Etudiant etudiant) {
         ApiResponse apiResponse = new ApiResponse();
         try {
-            Etudiant foundEtudiant = iEtudiantService.retrieveEtudiant(idEtudiant);
-            if (foundEtudiant == null) {
+            Etudiant updatedEtudiant = iEtudiantService.updateEtudiant(etudiant);
+            if (updatedEtudiant == null) {
                 apiResponse.setResponse(HttpStatus.NOT_FOUND, "Etudiant not found");
             } else {
-                etudiant.setId(idEtudiant);
-                Etudiant updatedEtudiant = iEtudiantService.updateEtudiant(etudiant);
                 apiResponse.setResponse(HttpStatus.OK, "Etudiant updated");
                 apiResponse.addData("etudiant", updatedEtudiant);
             }

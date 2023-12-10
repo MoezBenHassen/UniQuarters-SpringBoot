@@ -44,7 +44,7 @@ public class UserController {
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     public ResponseEntity<ApiResponse> updateUser(@RequestBody User user) {
         ApiResponse apiResponse = new ApiResponse();
         try {

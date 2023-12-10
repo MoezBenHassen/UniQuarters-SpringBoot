@@ -31,6 +31,7 @@ public class EtudiantServiceImpl implements IEtudiantService {
 
     @Override
     public Etudiant updateEtudiant(Etudiant e) {
+        userService.updateUser(e.getUser());
         return etudiantRepo.save(e);
     }
 

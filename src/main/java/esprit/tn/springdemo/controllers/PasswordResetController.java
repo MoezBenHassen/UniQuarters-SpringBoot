@@ -1,5 +1,6 @@
 package esprit.tn.springdemo.controllers;
 
+import esprit.tn.springdemo.entities.PasswordResetToken;
 import esprit.tn.springdemo.entities.User;
 import esprit.tn.springdemo.responses.ApiResponse;
 import esprit.tn.springdemo.services.IPasswordReset;
@@ -16,28 +17,51 @@ public class PasswordResetController {
     private final IPasswordReset service;
     private final IUserService userService;
 
-    @PostMapping("/{email}")
-    public ResponseEntity<String> requestPasswordReset(@PathVariable String email) {
+    @GetMapping("/{email}")
+    public ResponseEntity<ApiResponse> requestPasswordReset(@PathVariable String email) {
         User user = null;
+        ApiResponse apiResponse = new ApiResponse();
         try {
             user = userService.findUserByEmail(email);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cet utilisateur n'existe pas");
+            apiResponse.setResponse(HttpStatus.NOT_FOUND,"Cet utilisateur n'existe pas");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
         }
         service.createPasswordResetToken(user);
-        return ResponseEntity.status(HttpStatus.OK).body("Le lien de reinitialisation à étè envoyé a votre email");
+        apiResponse.setResponse(HttpStatus.OK,"Le lien de reinitialisation à étè envoyé a votre email");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PutMapping("/reset/{token}/{password}")
-    public ResponseEntity<String> resetPassword(@PathVariable String token, @PathVariable String password){
+    @GetMapping("/reset/{token}/{password}")
+    public ResponseEntity<ApiResponse> resetPassword(@PathVariable String token, @PathVariable String password){
+        ApiResponse apiResponse = new ApiResponse();
         try{
             service.resetPassword(token, password);
         }catch (Exception e){
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("Une erreur est survenue lors de la reinitialisation de votre mot de passe");
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, "Une erreur est survenue lors de la reinitialisation de votre mot de passe");
+            return ResponseEntity.badRequest().body(apiResponse);
         }
-        return ResponseEntity.ok().body("Mot de passe réinitialisé avec succées");
+        apiResponse.setResponse(HttpStatus.OK,"Mot de passe réinitialisé avec succées");
+        return ResponseEntity.ok().body(apiResponse);
+    }
+
+    @GetMapping("/getRequest/{token}")
+    public ResponseEntity<ApiResponse> getRequest(@PathVariable String token) {
+        ApiResponse apiResponse = new ApiResponse();
+        try {
+            PasswordResetToken p = service.getResetToken(token);
+            if (p == null) {
+                apiResponse.setResponse(HttpStatus.NOT_FOUND, "Request not found");
+            } else {
+                apiResponse.setResponse(HttpStatus.OK, "Request retrieved");
+                apiResponse.addData("request", p);
+            }
+        } catch (Exception e) {
+            apiResponse.setResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
 
 }

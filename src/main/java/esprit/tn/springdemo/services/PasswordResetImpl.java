@@ -7,6 +7,7 @@ import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,9 +35,16 @@ public class PasswordResetImpl implements IPasswordReset{
 
     @Override
     public void resetPassword(String token, String password) {
-        PasswordResetToken p = passwordResetRepo.findByToken(token);
-        p.getUser().setPassword(password);
-        userService.updatePassword(p.getUser());
-        disableToken(p);
+        PasswordResetToken p = passwordResetRepo.findByToken(token).orElse(null);
+        if (p != null) {
+            p.getUser().setPassword(password);
+            userService.updatePassword(p.getUser());
+            disableToken(p);
+        }
+    }
+
+    @Override
+    public PasswordResetToken getResetToken(String token) {
+        return passwordResetRepo.findByToken(token).orElse(null);
     }
 }
