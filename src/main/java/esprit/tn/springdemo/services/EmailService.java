@@ -27,4 +27,6 @@ public class EmailService {
 
         javaMailSender.send(message);
     }
+
 }
+

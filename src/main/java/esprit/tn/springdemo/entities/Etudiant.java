@@ -2,10 +2,7 @@ package esprit.tn.springdemo.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Etudiant {
@@ -26,9 +24,14 @@ public class Etudiant {
     String ecole;
     Date dateNaissance;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "etudiants")
     @JsonIgnore
     private Set<Reservation> reservations;
+
+    @OneToOne
+    private User user;
+
+
 
     @Override
     public String toString() {

@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,19 +21,17 @@ import java.util.stream.Collectors;
 public class FoyerServiceImpl implements IFoyerService {
     private final FoyerRepo foyerRepo;
     private final UniversiteRepo uniRepo;
-    private final BlocRepo blocRepo;
     private ModelMapper modelMapper;
 
     @Override
-    public FoyerDTO mapToDTO(Foyer foyer){
-        System.out.println(foyer);
-        modelMapper.typeMap(Foyer.class,FoyerDTO.class)
-                .addMappings(mapper -> mapper.map(src -> src.getBlocs().stream()
-                        .map(Bloc::getId)
-                        .collect(Collectors.toList()),FoyerDTO::setBlocs
-                ));
-        return modelMapper.map(foyer, FoyerDTO.class);
-
+    public FoyerDTO mapToDTO(Foyer foyer) {
+        FoyerDTO foyerDTO = new FoyerDTO();
+        foyerDTO.setUniversite(foyer.getUniversite());
+        foyerDTO.setNom(foyer.getNom());
+        foyerDTO.setCapacite(foyer.getCapacite());
+        foyerDTO.setId(foyer.getId());
+        foyerDTO.setBlocs(foyer.getBlocs().stream().map(Bloc::getId).collect(Collectors.toList()));
+        return foyerDTO;
     }
 
     @Override
@@ -64,7 +63,7 @@ public class FoyerServiceImpl implements IFoyerService {
     public Foyer ajouterFoyerEtAffecterAUniversite(Foyer foyer, long idUniversite) {
         Universite u = uniRepo.findById(idUniversite).orElse(null);
         foyer.setUniversite(u);
-        for (Bloc b:foyer.getBlocs()) {
+        for (Bloc b : foyer.getBlocs()) {
             b.setFoyer(foyer);
         }
         return foyerRepo.save(foyer);

@@ -10,7 +10,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class EtudiantServiceImpl implements IEtudiantService {
-    EtudiantRepo etudiantRepo;
+    final EtudiantRepo etudiantRepo;
+    final IUserService userService;
 
     @Override
     public List<Etudiant> retrieveAllEtudiants() {
@@ -23,7 +24,14 @@ public class EtudiantServiceImpl implements IEtudiantService {
     }
 
     @Override
+    public Etudiant addEtudiant(Etudiant e) {
+        userService.addUser(e.getUser());
+        return etudiantRepo.save(e);
+    }
+
+    @Override
     public Etudiant updateEtudiant(Etudiant e) {
+        userService.updateUser(e.getUser());
         return etudiantRepo.save(e);
     }
 

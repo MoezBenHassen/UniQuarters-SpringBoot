@@ -1,4 +1,4 @@
-package esprit.tn.springdemo.dto;
+package esprit.tn.springdemo.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
