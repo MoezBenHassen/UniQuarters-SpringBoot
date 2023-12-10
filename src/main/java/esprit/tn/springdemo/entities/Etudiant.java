@@ -24,7 +24,7 @@ public class Etudiant {
     String ecole;
     Date dateNaissance;
 
-    @ManyToMany(mappedBy = "etudiants")
+    @ManyToMany
     @JsonIgnore
     private Set<Reservation> reservations;
 
