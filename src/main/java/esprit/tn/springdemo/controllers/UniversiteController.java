@@ -23,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Slf4j
 public class UniversiteController {
-    private final String directory="C:\\uploadedFiles\\img\\";
+    private final String directory="C:/Users/Zeldariam/Desktop/New folder/2/UniQuarters-Angular/src/assets/img";
     private final IUniversiteService universiteService;
     private final IFoyerService foyerService;
 
