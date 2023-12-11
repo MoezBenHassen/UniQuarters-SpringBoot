@@ -16,12 +16,19 @@ public class DefaultAdminCreator implements CommandLineRunner {
     IUserService userService;
 
     @Override
-    public void run(String...args) throws Exception {
-        User test = userService.findUserByEmail("admin@admin");
-        if(test == null){
-        User admin = User.builder().email("admin@admin").password("admin").role(Role.ADMIN).build();
-        userService.addUser(admin);
+    public void run(String... args) throws Exception {
+        try {
+            User admin = userService.findUserByEmail("admin@admin");
+            if (admin == null) {
+                throw new Exception("Admin not found");
+            }
+        } catch (Exception e) {
+            User admin = new User();
+            admin.setEmail("admin@admin");
+            admin.setPassword("admin");
+            admin.setRole(Role.ADMIN);
+            userService.addUser(admin);
         }
-    }
 
+    }
 }
