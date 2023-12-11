@@ -18,4 +18,6 @@ public interface IBlocService {
 
     Bloc affectChambres(long blocId, List<Chambre> chambres);
 
+    Bloc addBlocWithFoyer(Bloc bloc, Long foyerId);
+
 }

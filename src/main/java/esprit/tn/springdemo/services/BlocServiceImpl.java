@@ -2,8 +2,10 @@ package esprit.tn.springdemo.services;
 
 import esprit.tn.springdemo.entities.Bloc;
 import esprit.tn.springdemo.entities.Chambre;
+import esprit.tn.springdemo.entities.Foyer;
 import esprit.tn.springdemo.repositories.BlocRepo;
 import esprit.tn.springdemo.repositories.ChambreRepo;
+import esprit.tn.springdemo.repositories.FoyerRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
@@ -16,7 +18,7 @@ import java.util.List;
 public class BlocServiceImpl implements IBlocService {
     private final BlocRepo blocRepo;
     private final ChambreRepo chambreRepo;
-
+    private final FoyerRepo foyerRepo;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -65,5 +67,12 @@ public class BlocServiceImpl implements IBlocService {
         entityManager.clear();
         Bloc updatedBloc = blocRepo.findById(blocId).orElse(null);
         return updatedBloc;
+    }
+
+    @Override
+    public Bloc addBlocWithFoyer(Bloc bloc, Long foyerId) {
+        Foyer foyer = foyerRepo.findById(foyerId).orElseThrow(() -> new RuntimeException("Foyer not found"));
+        bloc.setFoyer(foyer);
+        return blocRepo.save(bloc);
     }
 }
