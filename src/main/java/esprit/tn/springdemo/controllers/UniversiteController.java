@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,8 +21,9 @@ import java.util.UUID;
 @RequestMapping("/universites")
 @AllArgsConstructor
 @Slf4j
+
 public class UniversiteController {
-    private final String directory="C:/Users/Zeldariam/Desktop/New folder/2/UniQuarters-Angular/src/assets/img";
+    private final String directory="C:/Users/Administrateur/Documents/Angular-4TWIN/UniQuarters-Angular/src/assets/img";
     private final IUniversiteService universiteService;
     private final IFoyerService foyerService;
 
@@ -44,8 +44,6 @@ public class UniversiteController {
         ApiResponse apiResponse = new ApiResponse();
         try {
             log.info(u);
-            File dir = new File(directory);
-            dir.mkdirs();
             Universite universite= new ObjectMapper().readValue(u,Universite.class);
             String fileName = UUID.randomUUID().toString() + "_" + logo.getOriginalFilename();
             Path targetLocation = Paths.get(directory).resolve(fileName);
