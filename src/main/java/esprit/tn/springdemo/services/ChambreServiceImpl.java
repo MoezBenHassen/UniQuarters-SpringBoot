@@ -8,14 +8,18 @@ import esprit.tn.springdemo.entities.TypeChambre;
 import esprit.tn.springdemo.repositories.BlocRepo;
 import esprit.tn.springdemo.repositories.ChambreRepo;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class ChambreServiceImpl implements IChambreService {
     ChambreRepo chambreRepo;
@@ -26,16 +30,34 @@ public class ChambreServiceImpl implements IChambreService {
         return chambreRepo.findAll();
     }
 
-    @Override
-    public Chambre addChambre(Chambre c) {
-        return chambreRepo.save(c);
+@Override
+public Chambre addChambre(Chambre c) {
+    if (c.getReservations() == null) {
+        c.setReservations(new HashSet<>());
     }
+    Chambre savedChambre = chambreRepo.save(c);
+    savedChambre.updateAvailability();
+    return chambreRepo.save(savedChambre);
+}
 
-    @Override
-    public Chambre updateChambre(Chambre c) {
-        return chambreRepo.save(c);
-    }
 
+@Override
+public Chambre updateChambre(Chambre c) {
+    Chambre existingChambre = chambreRepo.findById(c.getId())
+            .orElseThrow(() -> new RuntimeException("Chambre not found"));
+
+    existingChambre.setNumero(c.getNumero());
+    existingChambre.setCapacity(c.getCapacity());
+    existingChambre.setDescription(c.getDescription());
+    existingChambre.setType(c.getType());
+    existingChambre.setBloc(c.getBloc());
+    existingChambre.setReservations(c.getReservations());
+
+    Chambre updatedChambre = chambreRepo.save(existingChambre);
+    updatedChambre.updateAvailability();
+
+    return chambreRepo.save(updatedChambre);
+}
     @Override
     public Chambre retrieveChambre(long idChambre) {
         return chambreRepo.findById(idChambre).orElse(null);
@@ -86,13 +108,17 @@ public class ChambreServiceImpl implements IChambreService {
     }
 
     @Override
+    // dont forget to add @enablescheduling to main
     public List<Chambre> getChambresWithReservations() {
+        log.info(chambreRepo.findAllWithReservations().toString());
         return chambreRepo.findAllWithReservations();
     }
     @Override
     public void deleteChambre(long id) {
         chambreRepo.deleteById(id);
     }
+
+    
 
 //    @Override
 //    public List<ChambreDTO> getChambresWithDetails() {

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 
 @RestController
@@ -44,37 +45,52 @@ public class ChambreController {
         return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
     }
 
-
-    @PostMapping("")
-    public ResponseEntity<ApiResponse> addChambre(@RequestBody Chambre c) {
-        ApiResponse apiResponse = new ApiResponse();
-        try {
-            Chambre addedChambre = iChambreService.addChambre(c);
-            apiResponse.setResponse(org.springframework.http.HttpStatus.CREATED, "Chambre added");
-            apiResponse.addData("chambre", addedChambre);
-        } catch (Exception e) {
-            apiResponse.setResponse(org.springframework.http.HttpStatus.BAD_REQUEST, e.getMessage());
+@PostMapping("")
+public ResponseEntity<ApiResponse> addChambre(@RequestBody Chambre c) {
+    ApiResponse apiResponse = new ApiResponse();
+    try {
+        if (c.getReservations() == null) {
+            c.setReservations(new HashSet<>());
         }
-        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
-    }
+        Chambre addedChambre = iChambreService.addChambre(c);
+        addedChambre.updateAvailability();
 
-    @PutMapping("/{idChambre}")
-    public ResponseEntity<ApiResponse> updateChambre(@RequestBody Chambre c, @PathVariable long idChambre) {
-        ApiResponse apiResponse = new ApiResponse();
-        try {
-            Chambre foundChambre = iChambreService.retrieveChambre(idChambre);
-            if (foundChambre == null) {
-                throw new RuntimeException("Chambre not found");
-            }
-            c.setId(idChambre);
-            Chambre updatedChambre = iChambreService.updateChambre(c);
-            apiResponse.setResponse(org.springframework.http.HttpStatus.OK, "Chambre updated");
-            apiResponse.addData("chambre", updatedChambre);
-        } catch (Exception e) {
-            apiResponse.setResponse(org.springframework.http.HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-        return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+        apiResponse.setResponse(org.springframework.http.HttpStatus.CREATED, "Chambre added");
+        apiResponse.addData("chambre", addedChambre);
+    } catch (Exception e) {
+        apiResponse.setResponse(org.springframework.http.HttpStatus.BAD_REQUEST, e.getMessage());
     }
+    return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+}
+
+
+@PutMapping("/{idChambre}")
+public ResponseEntity<ApiResponse> updateChambre(@RequestBody Chambre c, @PathVariable long idChambre) {
+    ApiResponse apiResponse = new ApiResponse();
+    try {
+        Chambre foundChambre = iChambreService.retrieveChambre(idChambre);
+        if (foundChambre == null) {
+            throw new RuntimeException("Chambre not found");
+        }
+
+        if (c.getReservations() == null) {
+            c.setReservations(new HashSet<>());
+        }
+
+        c.setId(idChambre);
+
+        Chambre updatedChambre = iChambreService.updateChambre(c);
+        updatedChambre.setCapacity(c.getCapacity());
+        updatedChambre.updateAvailability();
+
+        apiResponse.setResponse(org.springframework.http.HttpStatus.OK, "Chambre updated");
+        apiResponse.addData("chambre", updatedChambre);
+    } catch (Exception e) {
+        apiResponse.setResponse(org.springframework.http.HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+    return new ResponseEntity<>(apiResponse, apiResponse._getHttpStatus());
+}
+
 
     @GetMapping("/{idChambre}")
     public ResponseEntity<ApiResponse> retrieveChambre(@PathVariable long idChambre) {
