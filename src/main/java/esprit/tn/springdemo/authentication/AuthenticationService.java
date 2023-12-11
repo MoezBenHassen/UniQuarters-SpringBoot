@@ -1,33 +1,22 @@
 package esprit.tn.springdemo.authentication;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import esprit.tn.springdemo.config.JwtService;
 import esprit.tn.springdemo.entities.Etudiant;
 import esprit.tn.springdemo.entities.User;
-import esprit.tn.springdemo.repositories.UserRepo;
 import esprit.tn.springdemo.services.IEtudiantService;
 import esprit.tn.springdemo.services.IUserService;
 import esprit.tn.springdemo.token.Token;
 import esprit.tn.springdemo.token.TokenRepository;
 import esprit.tn.springdemo.token.TokenType;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
-import java.io.IOException;
-import java.util.logging.Logger;
 
 @Service
 @RequiredArgsConstructor
@@ -44,8 +33,9 @@ public class AuthenticationService {
                 .email(request.getUser().getEmail())
                 .password(request.getUser().getPassword())
                 .role(request.getUser().getRole())
+                .enabled(request.getUser().isEnabled())
                 .build();
-        request.setUser(service.addUser(user));
+        request.setUser(user);
         return etudiantService.addEtudiant(request);
     }
 
