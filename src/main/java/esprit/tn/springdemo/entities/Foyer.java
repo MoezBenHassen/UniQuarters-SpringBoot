@@ -29,7 +29,8 @@ public class Foyer {
 
 
     @OneToMany(mappedBy = "foyer", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    //@JsonManagedReference
+    @JsonIgnore
     private List<Bloc> blocs;
 
     @Override

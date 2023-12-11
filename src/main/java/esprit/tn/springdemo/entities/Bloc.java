@@ -26,7 +26,7 @@ public class Bloc {
     private String capacite;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonBackReference
+    //@JsonBackReference
     private Foyer foyer;
   
     @OneToMany(mappedBy = "bloc")
