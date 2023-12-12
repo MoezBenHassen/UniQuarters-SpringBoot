@@ -24,11 +24,11 @@ public class Etudiant {
     String ecole;
     Date dateNaissance;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Reservation> reservations;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private User user;
 
 

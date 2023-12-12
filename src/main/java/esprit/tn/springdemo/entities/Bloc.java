@@ -25,7 +25,7 @@ public class Bloc {
     private String color;
     private String capacite;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(/*cascade = CascadeType.ALL,*/ fetch = FetchType.EAGER)
     //@JsonBackReference
     private Foyer foyer;
   
