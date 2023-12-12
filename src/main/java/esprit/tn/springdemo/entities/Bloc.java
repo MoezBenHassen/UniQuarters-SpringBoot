@@ -29,9 +29,8 @@ public class Bloc {
     //@JsonBackReference
     private Foyer foyer;
   
-    @OneToMany(mappedBy = "bloc")
+    @OneToMany(cascade= CascadeType.ALL , mappedBy = "bloc")
     @JsonIgnore
-  
     private List<Chambre> chambres;
 
     @Override
