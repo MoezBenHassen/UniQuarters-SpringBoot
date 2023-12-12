@@ -73,6 +73,7 @@ public class BlocServiceImpl implements IBlocService {
     public Bloc addBlocWithFoyer(Bloc bloc, Long foyerId) {
         Foyer foyer = foyerRepo.findById(foyerId).orElseThrow(() -> new RuntimeException("Foyer not found"));
         bloc.setFoyer(foyer);
+        bloc.setText(bloc.getNom());
         return blocRepo.save(bloc);
     }
 }
