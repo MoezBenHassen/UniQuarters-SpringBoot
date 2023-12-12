@@ -207,7 +207,11 @@ public class ReservationServiceImpl implements IReservationService {
         try {
             String mailBody = this.generateMailBody(reservation, etudiant, chambre);
             System.out.println("mail body: " + mailBody);
-            emailService.sendEmail("medyacine.khouini@esprit.tn", "Reservation validee", mailBody);
+            //emailService.sendEmail("medyacine.khouini@esprit.tn", "Reservation validee", mailBody);
+            String emailEtudiant = etudiant.getUser().getEmail();
+            System.out.println("email etudiant: " + emailEtudiant);
+            emailService.sendEmail(emailEtudiant, "Reservation validee", mailBody);
+            
         } catch (MessagingException e) {
             System.out.println("Error sending email: " + e.getMessage());
         }

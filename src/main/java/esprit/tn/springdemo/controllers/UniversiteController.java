@@ -23,7 +23,7 @@ import java.util.UUID;
 @Slf4j
 
 public class UniversiteController {
-    private final String directory="C:/Users/Administrateur/Documents/Angular-4TWIN/UniQuarters-Angular/src/assets/img";
+    private final String directory="C:/Users/khoui/OneDrive/Documents/proet angular intégration/UniQuarters-Angular/src/assets/img";
     private final IUniversiteService universiteService;
     private final IFoyerService foyerService;
 
