@@ -1,9 +1,11 @@
 package esprit.tn.springdemo.services;
 
 import esprit.tn.springdemo.dto.ChambreDTO;
+import esprit.tn.springdemo.dto.ChambreDTO;
 import esprit.tn.springdemo.entities.Bloc;
 import esprit.tn.springdemo.entities.Chambre;
 import esprit.tn.springdemo.entities.Reservation;
+import esprit.tn.springdemo.entities.TypeChambre;
 import esprit.tn.springdemo.entities.TypeChambre;
 import esprit.tn.springdemo.repositories.BlocRepo;
 import esprit.tn.springdemo.repositories.ChambreRepo;
@@ -12,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,16 +30,34 @@ public class ChambreServiceImpl implements IChambreService {
         return chambreRepo.findAll();
     }
 
-    @Override
-    public Chambre addChambre(Chambre c) {
-        return chambreRepo.save(c);
+@Override
+public Chambre addChambre(Chambre c) {
+    if (c.getReservations() == null) {
+        c.setReservations(new HashSet<>());
     }
+    Chambre savedChambre = chambreRepo.save(c);
+    savedChambre.updateAvailability();
+    return chambreRepo.save(savedChambre);
+}
 
-    @Override
-    public Chambre updateChambre(Chambre c) {
-        return chambreRepo.save(c);
-    }
 
+@Override
+public Chambre updateChambre(Chambre c) {
+    Chambre existingChambre = chambreRepo.findById(c.getId())
+            .orElseThrow(() -> new RuntimeException("Chambre not found"));
+
+    existingChambre.setNumero(c.getNumero());
+    existingChambre.setCapacity(c.getCapacity());
+    existingChambre.setDescription(c.getDescription());
+    existingChambre.setType(c.getType());
+    existingChambre.setBloc(c.getBloc());
+    existingChambre.setReservations(c.getReservations());
+
+    Chambre updatedChambre = chambreRepo.save(existingChambre);
+    updatedChambre.updateAvailability();
+
+    return chambreRepo.save(updatedChambre);
+}
     @Override
     public Chambre retrieveChambre(long idChambre) {
         return chambreRepo.findById(idChambre).orElse(null);
@@ -48,6 +70,7 @@ public class ChambreServiceImpl implements IChambreService {
                 .filter(chambre -> chambre.getReservations().stream()
                         .anyMatch(r -> r.getAnneeUniversitaire().isAfter(dateDebut) && r.getAnneeUniversitaire().isBefore(dateFin)))
                 .collect(Collectors.toList());
+
     }
 
     @Override
@@ -60,13 +83,16 @@ public class ChambreServiceImpl implements IChambreService {
         System.out.println("Before affecting chambre with id " + idChambre + " to bloc with nom " + nomBloc);
 
         Chambre chambre = chambreRepo.findById(idChambre).orElseThrow(() -> new RuntimeException("Chambre not found"));
+
         System.out.println("Found chambre: " + chambre);
+
 
         Bloc bloc = blocRepo.findByNom(nomBloc);
         System.out.println("Found bloc: " + bloc);
         if (bloc == null) {
             throw new RuntimeException("Bloc not found");
         }
+
 
         chambre.setBloc(bloc);
         Chambre savedChambre = chambreRepo.save(chambre);
@@ -93,6 +119,7 @@ public class ChambreServiceImpl implements IChambreService {
     public void deleteChambre(long id) {
         chambreRepo.deleteById(id);
     }
+
 
 //    @Override
 //    public List<ChambreDTO> getChambresWithDetails() {
